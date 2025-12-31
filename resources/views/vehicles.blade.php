@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Search Vehicles - LocalRydes</title>
     <style>
         * {
@@ -421,10 +422,6 @@
             color: #666;
         }
 
-        .rating {
-            color: #ffa500;
-        }
-
         .no-results {
             display: none;
             text-align: center;
@@ -479,14 +476,14 @@
                     <label class="service-type-label">Select Your Service Type</label>
                     <div class="service-types">
                         <div class="service-type-card active" data-service="transfer">
-                            <div class="icon">=—</div>
+                            <div class="icon">=ï¿½</div>
                             <div class="service-text">
                                 <div class="title">Transfer Service</div>
                                 <div class="description">Point-to-point transportation</div>
                             </div>
                         </div>
                         <div class="service-type-card" data-service="hourly">
-                            <div class="icon">ð</div>
+                            <div class="icon">ï¿½</div>
                             <div class="service-text">
                                 <div class="title">Hourly Service</div>
                                 <div class="description">Book by the hour with a driver</div>
@@ -607,8 +604,8 @@
     <script>
         // Configuration
         const API_CONFIG = {
-            baseUrl: '{{ env("LOCALRYDES_API_URL", "https://api.localrydes.com/api/v2/external") }}',
-            apiKey: '{{ env("LOCALRYDES_API_KEY", "YOUR_API_KEY_HERE") }}'
+            baseUrl: '{{ env("LOCALRYDES_API_URL", "https://lr.local/api/v2/external") }}',
+            apiKey: '{{ env("LOCALRYDES_API_KEY", "lr_live_ZPKSM337Z5LxcSnvCorBivXA2NZzm5LHxXKIMmHK3M4Kb8x9nXrOA8GKjgRU") }}'
         };
 
         let currentServiceType = 'transfer';
@@ -801,11 +798,12 @@
                 const requestData = buildSearchRequest();
                 console.log('Search request:', requestData);
 
-                const response = await fetch(`${API_CONFIG.baseUrl}/search-available-vehicles`, {
+                // Use local proxy to avoid CORS issues
+                const response = await fetch('/api/search-vehicles', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-api-key': API_CONFIG.apiKey
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify(requestData)
                 });
@@ -816,8 +814,11 @@
                     throw new Error(data.message || 'Search failed');
                 }
 
-                if (data.success && data.data.availableVehicles && data.data.availableVehicles.length > 0) {
-                    displayVehicles(data.data.availableVehicles, data.data.bookingId);
+                // Convert availableVehicles object to array
+                const vehiclesArray = data.data.availableVehicles ? Object.values(data.data.availableVehicles) : [];
+
+                if (data.success && vehiclesArray.length > 0) {
+                    displayVehicles(vehiclesArray, data.data.bookingId);
                 } else {
                     noResults.classList.add('active');
                 }
@@ -880,16 +881,17 @@
             const currency = vehicleData.sourcePriceCurrency?.symbol || '$';
 
             card.innerHTML = `
-                <img src="${vehicle.images && vehicle.images[0] ? vehicle.images[0] : 'https://via.placeholder.com/400x200?text=Vehicle'}"
-                     alt="${vehicle.name}"
+                <img src="${vehicle.thumbnail || 'https://via.placeholder.com/400x200?text=Vehicle'}"
+                     alt="${vehicle.title}"
                      class="vehicle-image"
                      onerror="this.src='https://via.placeholder.com/400x200?text=Vehicle'">
                 <div class="vehicle-details">
-                    <h3 class="vehicle-name">${vehicle.name}</h3>
+                    <h3 class="vehicle-name">${vehicle.title}</h3>
+                    <div class="vehicle-class" style="color: #667eea; font-size: 0.9rem; margin-bottom: 10px;">${vehicle.vehicleClass?.title || ''}</div>
 
                     <div class="vehicle-info">
-                        <span>=d ${vehicle.passenger} passengers</span>
-                        <span>>ó ${vehicle.bag} bags</span>
+                        <span>ðŸ‘¥ ${vehicle.seatingCapacity} passengers</span>
+                        <span>ðŸ§³ ${vehicle.luggageCapacity} bags</span>
                     </div>
 
                     <div class="vehicle-features">
@@ -904,10 +906,9 @@
                         </div>
                     </div>
 
-                    <div class="partner-info">
-                        <div><strong>Partner:</strong> ${vehicle.partner?.company_name || 'LocalRydes'}</div>
-                        <div class="rating">P ${vehicle.partner?.rating || '5.0'} / 5.0</div>
-                    </div>
+                    ${vehicle.partnerName ? `<div class="partner-info">
+                        <div><strong>Partner:</strong> ${vehicle.partnerName}</div>
+                    </div>` : ''}
 
                     <button class="btn-book"
                             ${vehicleData.customerCanBook ? '' : 'disabled'}
