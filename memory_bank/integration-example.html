@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalRydes Integration Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .search-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .btn-search {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-search:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c33;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .vehicles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .vehicle-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .vehicle-details {
+            padding: 20px;
+        }
+
+        .vehicle-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .vehicle-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .vehicle-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .feature-badge {
+            background: #f0f0f0;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .price-container {
+            margin: 15px 0;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .current-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .discount-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .btn-book {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-book:hover {
+            background: #45a049;
+        }
+
+        .btn-book:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .partner-info {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .rating {
+            color: #ffa500;
+        }
+
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .no-results.active {
+            display: block;
+        }
+
+        .no-results h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 Vehicle Booking</h1>
+            <p>Find and book your perfect ride</p>
+        </div>
+
+        <!-- Search Form -->
+        <div class="search-form">
+            <h2 style="margin-bottom: 20px;">Search Available Vehicles</h2>
+            <form id="searchForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickupLocation">Pickup Location</label>
+                        <input type="text" id="pickupLocation" placeholder="Enter pickup address" required>
+                        <input type="hidden" id="pickupLat" value="23.8434344">
+                        <input type="hidden" id="pickupLng" value="90.4029252">
+                        <input type="hidden" id="pickupPlaceId" value="ChIJvY9HupHGVTcR7BXrcRP3s9E">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dropoffLocation">Dropoff Location</label>
+                        <input type="text" id="dropoffLocation" placeholder="Enter dropoff address" required>
+                        <input type="hidden" id="dropoffLat" value="23.1771288">
+                        <input type="hidden" id="dropoffLng" value="89.16071740000001">
+                        <input type="hidden" id="dropoffPlaceId" value="ChIJKZ-5WkUX_zkR29gWNCGKmZI">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pickupDate">Pickup Date</label>
+                        <input type="date" id="pickupDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pickupTime">Pickup Time</label>
+                        <input type="time" id="pickupTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="passengers">Passengers</label>
+                        <select id="passengers" required>
+                            <option value="1">1 Passenger</option>
+                            <option value="2" selected>2 Passengers</option>
+                            <option value="3">3 Passengers</option>
+                            <option value="4">4 Passengers</option>
+                            <option value="5">5 Passengers</option>
+                            <option value="6">6+ Passengers</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bags">Luggage</label>
+                        <select id="bags" required>
+                            <option value="0">No Luggage</option>
+                            <option value="1" selected>1 Bag</option>
+                            <option value="2">2 Bags</option>
+                            <option value="3">3 Bags</option>
+                            <option value="4">4+ Bags</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-search" id="searchBtn">Search Vehicles</button>
+            </form>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage"></div>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Searching for available vehicles...</p>
+        </div>
+
+        <!-- No Results -->
+        <div class="no-results" id="noResults">
+            <h3>No vehicles found</h3>
+            <p>Please try different search criteria.</p>
+        </div>
+
+        <!-- Vehicles Container -->
+        <div class="vehicles-container" id="vehiclesContainer"></div>
+    </div>
+
+    <script>
+        // ===== CONFIGURATION =====
+        // IMPORTANT: Never expose your API key in client-side code in production!
+        // This should be done server-side. This is for demo purposes only.
+        const API_CONFIG = {
+            baseUrl: 'https://your-domain.com/api/v2/external',
+            apiKey: 'lr_live_YOUR_API_KEY_HERE' // Replace with your actual API key
+        };
+
+        // ===== FORM HANDLING =====
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await searchVehicles();
+        });
+
+        // Set default date/time (tomorrow at 10:00)
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('pickupDate').value = tomorrow.toISOString().split('T')[0];
+        document.getElementById('pickupTime').value = '10:00';
+
+        // For demo: Pre-fill with test locations
+        document.getElementById('pickupLocation').value = 'Hazrat Shahjalal International Airport, Dhaka';
+        document.getElementById('dropoffLocation').value = 'Gulshan, Dhaka';
+
+        // ===== API FUNCTIONS =====
+        async function searchVehicles() {
+            const searchBtn = document.getElementById('searchBtn');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const vehiclesContainer = document.getElementById('vehiclesContainer');
+            const noResults = document.getElementById('noResults');
+
+            // Show loading, hide others
+            loading.classList.add('active');
+            errorMessage.classList.remove('active');
+            noResults.classList.remove('active');
+            vehiclesContainer.innerHTML = '';
+            searchBtn.disabled = true;
+
+            try {
+                // Get form data
+                const formData = getFormData();
+
+                // Validate date/time
+                if (!validateDateTime(formData.pickupDate, formData.pickupTime)) {
+                    throw new Error('Pickup time must be at least 12 hours in the future');
+                }
+
+                // Build request
+                const requestData = buildSearchRequest(formData);
+
+                // Make API call
+                const response = await fetch(`${API_CONFIG.baseUrl}/search-available-vehicles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_CONFIG.apiKey
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Search failed');
+                }
+
+                if (data.success && data.data.availableVehicles.length > 0) {
+                    displayVehicles(data.data.availableVehicles, data.data.bookingId);
+                } else {
+                    noResults.classList.add('active');
+                }
+
+            } catch (error) {
+                console.error('Search error:', error);
+                errorMessage.textContent = error.message || 'Failed to search vehicles. Please try again.';
+                errorMessage.classList.add('active');
+            } finally {
+                loading.classList.remove('active');
+                searchBtn.disabled = false;
+            }
+        }
+
+        function getFormData() {
+            return {
+                pickupLocation: document.getElementById('pickupLocation').value,
+                pickupLat: document.getElementById('pickupLat').value,
+                pickupLng: document.getElementById('pickupLng').value,
+                pickupPlaceId: document.getElementById('pickupPlaceId').value,
+                dropoffLocation: document.getElementById('dropoffLocation').value,
+                dropoffLat: document.getElementById('dropoffLat').value,
+                dropoffLng: document.getElementById('dropoffLng').value,
+                dropoffPlaceId: document.getElementById('dropoffPlaceId').value,
+                pickupDate: document.getElementById('pickupDate').value,
+                pickupTime: document.getElementById('pickupTime').value,
+                passengers: document.getElementById('passengers').value,
+                bags: document.getElementById('bags').value
+            };
+        }
+
+        function validateDateTime(date, time) {
+            const pickupDateTime = new Date(`${date}T${time}`);
+            const now = new Date();
+            const hoursUntilPickup = (pickupDateTime - now) / (1000 * 60 * 60);
+            return hoursUntilPickup >= 12;
+        }
+
+        function buildSearchRequest(formData) {
+            // Convert date format from YYYY-MM-DD to YYYY/MM/DD
+            const dateFormatted = formData.pickupDate.replace(/-/g, '/');
+
+            return {
+                trip_booking_type: 'transfer',
+                pick_up_location: {
+                    id: formData.pickupPlaceId,
+                    google_place_id: formData.pickupPlaceId,
+                    name: formData.pickupLocation,
+                    lat: formData.pickupLat,
+                    lng: formData.pickupLng,
+                    address: formData.pickupLocation,
+                    isFavorite: "0",
+                    type: "1",
+                    note: "",
+                    types: []
+                },
+                drop_off_location: {
+                    id: formData.dropoffPlaceId,
+                    google_place_id: formData.dropoffPlaceId,
+                    name: formData.dropoffLocation,
+                    lat: formData.dropoffLat,
+                    lng: formData.dropoffLng,
+                    address: formData.dropoffLocation,
+                    isFavorite: "0",
+                    type: "3",
+                    note: "",
+                    types: []
+                },
+                itineraries: [],
+                pickup_date: dateFormatted,
+                pickup_time: formData.pickupTime,
+                passengers: formData.passengers,
+                bags: formData.bags,
+                booking_hour: null
+            };
+        }
+
+        // ===== DISPLAY FUNCTIONS =====
+        function displayVehicles(vehicles, bookingId) {
+            const container = document.getElementById('vehiclesContainer');
+            container.innerHTML = '';
+
+            vehicles.forEach(vehicleData => {
+                const card = createVehicleCard(vehicleData, bookingId);
+                container.appendChild(card);
+            });
+        }
+
+        function createVehicleCard(vehicleData, bookingId) {
+            const vehicle = vehicleData.vehicle;
+            const card = document.createElement('div');
+            card.className = 'vehicle-card';
+
+            const hasDiscount = vehicleData.isDiscount === 1;
+            const currency = vehicleData.sourcePriceCurrency.symbol;
+
+            card.innerHTML = `
+                <img src="${vehicle.images && vehicle.images[0] ? vehicle.images[0] : 'https://via.placeholder.com/400x200?text=Vehicle'}"
+                     alt="${vehicle.name}"
+                     class="vehicle-image"
+                     onerror="this.src='https://via.placeholder.com/400x200?text=Vehicle'">
+                <div class="vehicle-details">
+                    <h3 class="vehicle-name">${vehicle.name}</h3>
+
+                    <div class="vehicle-info">
+                        <span>👤 ${vehicle.passenger} passengers</span>
+                        <span>🧳 ${vehicle.bag} bags</span>
+                    </div>
+
+                    <div class="vehicle-features">
+                        ${vehicle.features ? vehicle.features.map(f => `<span class="feature-badge">${f}</span>`).join('') : ''}
+                    </div>
+
+                    <div class="price-container">
+                        ${hasDiscount ? `<div class="original-price">${currency}${vehicleData.priceBeforeDiscount.toFixed(2)}</div>` : ''}
+                        <div class="current-price">
+                            ${currency}${vehicleData.convertedPrice.toFixed(2)}
+                            ${hasDiscount ? `<span class="discount-badge">${vehicleData.partnerDiscountPercentage.toFixed(0)}% OFF</span>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="partner-info">
+                        <div><strong>Partner:</strong> ${vehicle.partner.company_name}</div>
+                        <div class="rating">⭐ ${vehicle.partner.rating} / 5.0</div>
+                    </div>
+
+                    <button class="btn-book"
+                            ${vehicleData.customerCanBook ? '' : 'disabled'}
+                            onclick="bookVehicle(${vehicle.id}, '${bookingId}')">
+                        ${vehicleData.customerCanBook ? 'Book Now' : 'Not Available'}
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function bookVehicle(vehicleId, bookingId) {
+            // TODO: Implement booking logic
+            alert(`Booking vehicle ${vehicleId} with booking ID: ${bookingId}\n\nThis would redirect to your booking page.`);
+
+            // Example: Redirect to booking page
+            // window.location.href = `/booking?vehicleId=${vehicleId}&bookingId=${bookingId}`;
+        }
+
+        // ===== GOOGLE PLACES INTEGRATION (Optional) =====
+        // Uncomment and configure if you want to use Google Places Autocomplete
+        /*
+        function initAutocomplete() {
+            const pickupInput = document.getElementById('pickupLocation');
+            const dropoffInput = document.getElementById('dropoffLocation');
+
+            const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+            const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput);
+
+            pickupAutocomplete.addListener('place_changed', function() {
+                const place = pickupAutocomplete.getPlace();
+                if (place.geometry) {
+                    document.getElementById('pickupLat').value = place.geometry.location.lat();
+                    document.getElementById('pickupLng').value = place.geometry.location.lng();
+                    document.getElementById('pickupPlaceId').value = place.place_id;
+                }
+            });
+
+            dropoffAutocomplete.addListener('place_changed', function() {
+                const place = dropoffAutocomplete.getPlace();
+                if (place.geometry) {
+                    document.getElementById('dropoffLat').value = place.geometry.location.lat();
+                    document.getElementById('dropoffLng').value = place.geometry.location.lng();
+                    document.getElementById('dropoffPlaceId').value = place.place_id;
+                }
+            });
+        }
+
+        // Load Google Places API
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY&libraries=places&callback=initAutocomplete" async defer></script>
+        */
+    </script>
+</body>
+</html>
