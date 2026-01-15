@@ -55,28 +55,28 @@
 
         .booking-card {
             background: white;
-            padding: 40px;
+            padding: 28px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             margin-bottom: 30px;
         }
 
         .booking-card h2 {
-            font-size: 1.8rem;
-            margin-bottom: 30px;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
             color: #333;
         }
 
         /* Service Type Selector */
         .service-type-selector {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .service-type-label {
             font-weight: 600;
             color: #555;
-            font-size: 1rem;
-            margin-bottom: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
             display: block;
         }
 
@@ -88,14 +88,14 @@
 
         .service-type-card {
             border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 10px;
+            padding: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
             background: #fff;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .service-type-card:hover {
@@ -138,37 +138,37 @@
 
         /* Form Styles */
         .form-section {
-            margin-bottom: 25px;
+            margin-bottom: 18px;
         }
 
         .form-section-title {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #667eea;
             color: #333;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 14px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #333;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
             transition: border-color 0.3s;
             font-family: inherit;
         }
@@ -240,16 +240,16 @@
         /* Buttons */
         .btn-search {
             width: 100%;
-            padding: 16px;
+            padding: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.3s;
-            margin-top: 20px;
+            margin-top: 14px;
         }
 
         .btn-search:hover {
@@ -403,6 +403,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-book:hover {
@@ -412,6 +416,25 @@
         .btn-book:disabled {
             background: #ccc;
             cursor: not-allowed;
+        }
+
+        .btn-book.loading {
+            background: #45a049;
+            cursor: wait;
+        }
+
+        .btn-book .spinner-inline {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.6s linear infinite;
+        }
+
+        .btn-book.loading .spinner-inline {
+            display: block;
         }
 
         .partner-info {
@@ -461,14 +484,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        {{-- <div class="header">
             <h1>Search Available Vehicles</h1>
             <p>Find the perfect vehicle for your journey</p>
             <a href="/">&larr; Back to Home</a>
-        </div>
+        </div> --}}
 
         <div class="booking-card">
-            <h2>Book Your Ride</h2>
 
             <form id="searchForm">
                 <!-- Service Type Selection -->
@@ -624,7 +646,23 @@
             initializeGoogleAutocomplete();
             initializeItineraryButtons();
             initializeFormSubmission();
+            loadSavedSearchResults();
         });
+
+        function loadSavedSearchResults() {
+            const savedData = localStorage.getItem('vehicleSearchResults');
+            if (savedData) {
+                try {
+                    const searchData = JSON.parse(savedData);
+                    if (searchData.vehicles && searchData.vehicles.length > 0) {
+                        console.log('Loading saved search results:', searchData.vehicles.length, 'vehicles');
+                        displayVehicles(searchData.vehicles, searchData.bookingId);
+                    }
+                } catch (error) {
+                    console.error('Error loading saved results:', error);
+                }
+            }
+        }
 
         function initializeDateDefaults() {
             const tomorrow = new Date();
@@ -818,6 +856,14 @@
                 const vehiclesArray = data.data.availableVehicles ? Object.values(data.data.availableVehicles) : [];
 
                 if (data.success && vehiclesArray.length > 0) {
+                    // Save to localStorage
+                    const searchData = {
+                        vehicles: vehiclesArray,
+                        bookingId: data.data.bookingId,
+                        timestamp: new Date().getTime()
+                    };
+                    localStorage.setItem('vehicleSearchResults', JSON.stringify(searchData));
+
                     displayVehicles(vehiclesArray, data.data.bookingId);
                 } else {
                     noResults.classList.add('active');
@@ -866,7 +912,14 @@
             const container = document.getElementById('vehiclesContainer');
             container.innerHTML = '';
 
-            vehicles.forEach(vehicleData => {
+            // Sort vehicles by price (ascending - lowest to highest)
+            const sortedVehicles = vehicles.sort((a, b) => {
+                const priceA = parseFloat(a.convertedPrice) || 0;
+                const priceB = parseFloat(b.convertedPrice) || 0;
+                return priceA - priceB;
+            });
+
+            sortedVehicles.forEach(vehicleData => {
                 const card = createVehicleCard(vehicleData, bookingId);
                 container.appendChild(card);
             });
@@ -907,13 +960,14 @@
                     </div>
 
                     ${vehicle.partnerName ? `<div class="partner-info">
-                        <div><strong>Partner:</strong> ${vehicle.partnerName}</div>
+                        <div><strong>Partner:</strong> Localrydes</div>
                     </div>` : ''}
 
                     <button class="btn-book"
                             ${vehicleData.customerCanBook ? '' : 'disabled'}
-                            onclick="bookVehicle(${vehicle.id}, '${bookingId}')">
-                        ${vehicleData.customerCanBook ? 'Book Now' : 'Not Available'}
+                            onclick="bookVehicle('${vehicleData.b2bBookingLink}', event)">
+                        <span class="btn-text">${vehicleData.customerCanBook ? 'Book Now' : 'Not Available'}</span>
+                        <span class="spinner-inline"></span>
                     </button>
                 </div>
             `;
@@ -921,9 +975,22 @@
             return card;
         }
 
-        function bookVehicle(vehicleId, bookingId) {
-            alert(`Booking vehicle ${vehicleId} with booking ID: ${bookingId}\n\nThis would redirect to your booking confirmation page.`);
-            // In production: window.location.href = `/booking/confirm?vehicleId=${vehicleId}&bookingId=${bookingId}`;
+        function bookVehicle(bookingLink, event) {
+            if (!bookingLink) {
+                alert('Booking link is not available for this vehicle.');
+                return;
+            }
+
+            const button = event.target.closest('.btn-book');
+
+            // Add loading state
+            button.classList.add('loading');
+            button.disabled = true;
+
+            // Redirect after 0.5 seconds
+            setTimeout(() => {
+                window.location.href = bookingLink;
+            }, 500);
         }
     </script>
 </body>
