@@ -11,5 +11,16 @@ Route::get('/vehicles', function () {
     return view('vehicles');
 });
 
+// Vehicle search results page
+Route::get('/search/availavael-vehicles/{bookingId}', function ($bookingId) {
+    return view('vehicle-results', ['bookingId' => $bookingId]);
+});
+
+// Booking details page
+Route::get('/booking/details/{bookingId}', function ($bookingId) {
+    return view('booking-details', ['bookingId' => $bookingId]);
+});
+
 // API Proxy to avoid CORS issues
 Route::post('/api/search-vehicles', [VehicleSearchController::class, 'search']);
+Route::post('/api/select-vehicle', [VehicleSearchController::class, 'selectVehicle']);

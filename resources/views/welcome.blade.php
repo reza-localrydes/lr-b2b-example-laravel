@@ -611,15 +611,6 @@
             <div class="spinner"></div>
             <p>Searching for available vehicles...</p>
         </div>
-
-        <!-- No Results -->
-        <div class="no-results" id="noResults">
-            <h3>No vehicles found</h3>
-            <p>Please try different search criteria.</p>
-        </div>
-
-        <!-- Vehicles Container -->
-        <div class="vehicles-container" id="vehiclesContainer"></div>
     </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_PLACE_API_KEY') }}&libraries=places"></script>
@@ -646,23 +637,7 @@
             initializeGoogleAutocomplete();
             initializeItineraryButtons();
             initializeFormSubmission();
-            loadSavedSearchResults();
         });
-
-        function loadSavedSearchResults() {
-            const savedData = localStorage.getItem('vehicleSearchResults');
-            if (savedData) {
-                try {
-                    const searchData = JSON.parse(savedData);
-                    if (searchData.vehicles && searchData.vehicles.length > 0) {
-                        console.log('Loading saved search results:', searchData.vehicles.length, 'vehicles');
-                        displayVehicles(searchData.vehicles, searchData.bookingId);
-                    }
-                } catch (error) {
-                    console.error('Error loading saved results:', error);
-                }
-            }
-        }
 
         function initializeDateDefaults() {
             const tomorrow = new Date();
@@ -811,8 +786,6 @@
             const searchBtn = document.getElementById('searchBtn');
             const loading = document.getElementById('loading');
             const errorMessage = document.getElementById('errorMessage');
-            const vehiclesContainer = document.getElementById('vehiclesContainer');
-            const noResults = document.getElementById('noResults');
 
             // Validation
             if (!locationData.pickup) {
@@ -828,8 +801,6 @@
             // Show loading
             loading.classList.add('active');
             errorMessage.classList.remove('active');
-            noResults.classList.remove('active');
-            vehiclesContainer.innerHTML = '';
             searchBtn.disabled = true;
 
             try {
@@ -864,9 +835,10 @@
                     };
                     localStorage.setItem('vehicleSearchResults', JSON.stringify(searchData));
 
-                    displayVehicles(vehiclesArray, data.data.bookingId);
+                    // Redirect to results page
+                    window.location.href = `/search/availavael-vehicles/${data.data.bookingId}`;
                 } else {
-                    noResults.classList.add('active');
+                    alert('No vehicles found. Please try different search criteria.');
                 }
 
             } catch (error) {
@@ -906,91 +878,6 @@
             }
 
             return requestData;
-        }
-
-        function displayVehicles(vehicles, bookingId) {
-            const container = document.getElementById('vehiclesContainer');
-            container.innerHTML = '';
-
-            // Sort vehicles by price (ascending - lowest to highest)
-            const sortedVehicles = vehicles.sort((a, b) => {
-                const priceA = parseFloat(a.convertedPrice) || 0;
-                const priceB = parseFloat(b.convertedPrice) || 0;
-                return priceA - priceB;
-            });
-
-            sortedVehicles.forEach(vehicleData => {
-                const card = createVehicleCard(vehicleData, bookingId);
-                container.appendChild(card);
-            });
-        }
-
-        function createVehicleCard(vehicleData, bookingId) {
-            const vehicle = vehicleData.vehicle;
-            const card = document.createElement('div');
-            card.className = 'vehicle-card';
-
-            const hasDiscount = vehicleData.isDiscount === 1;
-            const currency = vehicleData.sourcePriceCurrency?.symbol || '$';
-
-            card.innerHTML = `
-                <img src="${vehicle.thumbnail || 'https://via.placeholder.com/400x200?text=Vehicle'}"
-                     alt="${vehicle.title}"
-                     class="vehicle-image"
-                     onerror="this.src='https://via.placeholder.com/400x200?text=Vehicle'">
-                <div class="vehicle-details">
-                    <h3 class="vehicle-name">${vehicle.title}</h3>
-                    <div class="vehicle-class" style="color: #667eea; font-size: 0.9rem; margin-bottom: 10px;">${vehicle.vehicleClass?.title || ''}</div>
-
-                    <div class="vehicle-info">
-                        <span>👥 ${vehicle.seatingCapacity} passengers</span>
-                        <span>🧳 ${vehicle.luggageCapacity} bags</span>
-                    </div>
-
-                    <div class="vehicle-features">
-                        ${vehicle.features ? vehicle.features.map(f => `<span class="feature-badge">${f}</span>`).join('') : ''}
-                    </div>
-
-                    <div class="price-container">
-                        ${hasDiscount ? `<div class="original-price">${currency}${parseFloat(vehicleData.priceBeforeDiscount).toFixed(2)}</div>` : ''}
-                        <div class="current-price">
-                            ${currency}${parseFloat(vehicleData.convertedPrice).toFixed(2)}
-                            ${hasDiscount ? `<span class="discount-badge">${parseFloat(vehicleData.partnerDiscountPercentage).toFixed(0)}% OFF</span>` : ''}
-                        </div>
-                    </div>
-
-                    ${vehicle.partnerName ? `<div class="partner-info">
-                        <div><strong>Partner:</strong> Localrydes</div>
-                    </div>` : ''}
-
-                    <button class="btn-book"
-                            ${vehicleData.customerCanBook ? '' : 'disabled'}
-                            onclick="bookVehicle('${vehicleData.b2bBookingLink}', event)">
-                        <span class="btn-text">${vehicleData.customerCanBook ? 'Book Now' : 'Not Available'}</span>
-                        <span class="spinner-inline"></span>
-                    </button>
-                </div>
-            `;
-
-            return card;
-        }
-
-        function bookVehicle(bookingLink, event) {
-            if (!bookingLink) {
-                alert('Booking link is not available for this vehicle.');
-                return;
-            }
-
-            const button = event.target.closest('.btn-book');
-
-            // Add loading state
-            button.classList.add('loading');
-            button.disabled = true;
-
-            // Redirect after 0.5 seconds
-            setTimeout(() => {
-                window.location.href = bookingLink;
-            }, 500);
         }
     </script>
 </body>
