@@ -63,4 +63,38 @@ class VehicleSearchController extends Controller
             ], 500);
         }
     }
+
+    public function storeReservation(Request $request)
+    {
+        $apiUrl = env('LOCALRYDES_API_URL');
+        $apiKey = env('LOCALRYDES_API_KEY');
+
+        // Validate request
+        $validated = $request->validate([
+            'booking_id' => 'required|string',
+            'flight_number' => 'nullable|string',
+            'passenger' => 'required|array',
+            'passenger.full_name' => 'required|string',
+            'passenger.email' => 'nullable|email',
+            'passenger.mobile' => 'required|string',
+        ]);
+
+        try {
+            // For local development, disable SSL verification
+            $response = Http::withoutVerifying()
+                ->withHeaders([
+                    'Content-Type' => 'application/json',
+                    'x-api-key' => $apiKey,
+                ])
+                ->timeout(30)
+                ->post($apiUrl . '/booking/store-reservation', $validated);
+
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to store reservation: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

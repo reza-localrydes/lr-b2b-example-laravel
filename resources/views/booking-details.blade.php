@@ -202,6 +202,28 @@
             background: #45a049;
         }
 
+        .btn-continue:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         .loading {
             display: none;
             text-align: center;
@@ -397,9 +419,52 @@
                         </div>
                     </div>
 
-                    <button class="btn-continue" onclick="continueToCheckout()">
-                        Continue to Checkout
-                    </button>
+                    <h2 style="margin-top: 30px;">Passenger Information</h2>
+                    <form id="reservationForm" onsubmit="submitReservation(event)">
+                        <div class="info-grid">
+                            <div class="form-group">
+                                <label for="fullName">Full Name <span style="color: #e74c3c;">*</span></label>
+                                <input type="text"
+                                       id="fullName"
+                                       name="full_name"
+                                       required
+                                       placeholder="Enter passenger full name"
+                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email"
+                                       id="email"
+                                       name="email"
+                                       placeholder="Enter email address"
+                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mobile">Mobile Number <span style="color: #e74c3c;">*</span></label>
+                                <input type="tel"
+                                       id="mobile"
+                                       name="mobile"
+                                       required
+                                       placeholder="Enter mobile number"
+                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="flightNumber">Flight Number</label>
+                                <input type="text"
+                                       id="flightNumber"
+                                       name="flight_number"
+                                       placeholder="Enter flight number (optional)"
+                                       style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem;">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-continue" id="confirmBookingBtn">
+                            Confirm Booking
+                        </button>
+                    </form>
                 </div>
             `;
         }
@@ -410,9 +475,84 @@
             errorElement.classList.add('active');
         }
 
-        function continueToCheckout() {
-            // This will be implemented in the next step
-            alert('Checkout functionality coming soon!');
+        async function submitReservation(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const submitBtn = document.getElementById('confirmBookingBtn');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Hide any previous errors
+            errorMessage.classList.remove('active');
+
+            // Get form data
+            const formData = {
+                booking_id: bookingId,
+                flight_number: form.flight_number.value.trim() || null,
+                passenger: {
+                    full_name: form.full_name.value.trim(),
+                    email: form.email.value.trim() || null,
+                    mobile: form.mobile.value.trim()
+                }
+            };
+
+            // Validate required fields
+            if (!formData.passenger.full_name) {
+                alert('Please enter passenger full name');
+                return;
+            }
+
+            if (!formData.passenger.mobile) {
+                alert('Please enter mobile number');
+                return;
+            }
+
+            // Disable submit button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            try {
+                const response = await fetch('/api/store-reservation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to confirm booking');
+                }
+
+                if (data.success && data.data && data.data.reservation) {
+                    // Store reservation data in localStorage
+                    localStorage.setItem('confirmedReservation', JSON.stringify({
+                        bookingData: data.data,
+                        timestamp: new Date().getTime()
+                    }));
+
+                    // Clear previous booking data
+                    localStorage.removeItem('selectedVehicleBooking');
+
+                    // Redirect to success page with reservation UUID
+                    const reservationUuid = data.data.reservation.uuid;
+                    window.location.href = `/booking/success/${reservationUuid}`;
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+
+            } catch (error) {
+                console.error('Reservation error:', error);
+                errorMessage.textContent = error.message || 'Failed to confirm booking. Please try again.';
+                errorMessage.classList.add('active');
+
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Confirm Booking';
+            }
         }
     </script>
 </body>
