@@ -9,6 +9,9 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
     <!-- Custom CSS -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 </head>
@@ -26,7 +29,7 @@
                         <a class="nav-link" href="#home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Pricing</a>
+                        <a class="nav-link" href="">Offers</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
@@ -42,229 +45,10 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-6">
-                    <div class="hero-text">
-                        <h1>Premium Transportation at Your Fingertips</h1>
-                        <p>Experience luxury and comfort with our professional chauffeur services. Available 24/7 for all your transportation needs.</p>
+    @include('partials.home.hero')
+    @include('partials.home.offers')
 
-                        <div class="row g-3 mt-3">
-                            <div class="col-6">
-                                <div class="feature-item">
-                                    <div class="feature-icon">⚡</div>
-                                    <div class="feature-text">Instant Booking</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="feature-item">
-                                    <div class="feature-icon">🚗</div>
-                                    <div class="feature-text">Premium Vehicles</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="feature-item">
-                                    <div class="feature-icon">👨‍✈️</div>
-                                    <div class="feature-text">Professional Drivers</div>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="feature-item">
-                                    <div class="feature-icon">💳</div>
-                                    <div class="feature-text">Transparent Pricing</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="col-lg-6">
-
-                <div class="search-card">
-
-                    <!-- Error Message -->
-                    <div class="error-message" id="errorMessage"></div>
-
-                    <form id="searchForm">
-                        <!-- Service Type Selection -->
-                        <div class="mb-3">
-                            <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="service-type-card active" data-service="transfer">
-                                        <div class="icon">🚖</div>
-                                        <div class="title">Transfer</div>
-                                        <div class="description">Point-to-point</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="service-type-card" data-service="hourly">
-                                        <div class="icon">⏱️</div>
-                                        <div class="title">Hourly</div>
-                                        <div class="description">Book by hour</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Location Fields -->
-                        <div class="mb-3">
-                            <label for="pickupLocation" class="form-label">Pickup Location <span class="text-danger">*</span></label>
-                            <input type="text" id="pickupLocation" class="form-control search-location" placeholder="Enter pickup address" autocomplete="off" required>
-                        </div>
-
-                        <!-- Itinerary Stops Container -->
-                        <div id="itinerariesContainer"></div>
-                        <a href="javascript:void(0)" class="btn-add-itinerary d-inline-block mb-3" id="addItinerary">+ Add Stop</a>
-
-                        <div class="mb-3 dropoff-container">
-                            <label for="dropoffLocation" class="form-label">Drop-off Location <span class="text-danger dropoff-required">*</span></label>
-                            <input type="text" id="dropoffLocation" class="form-control search-location" placeholder="Enter drop-off address" autocomplete="off">
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="pickupDate" class="form-label">Pickup Date <span class="text-danger">*</span></label>
-                                <input type="date" id="pickupDate" class="form-control" required>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="pickupTime" class="form-label">Pickup Time <span class="text-danger">*</span></label>
-                                <input type="time" id="pickupTime" class="form-control" required>
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label for="passengers" class="form-label">Passengers <span class="text-danger">*</span></label>
-                                <select id="passengers" class="form-select" required>
-                                    <option value="1">1 Passenger</option>
-                                    <option value="2" selected>2 Passengers</option>
-                                    <option value="3">3 Passengers</option>
-                                    <option value="4">4 Passengers</option>
-                                    <option value="5">5 Passengers</option>
-                                    <option value="6">6+ Passengers</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="bags" class="form-label">Luggage <span class="text-danger">*</span></label>
-                                <select id="bags" class="form-select" required>
-                                    <option value="0">No Luggage</option>
-                                    <option value="1" selected>1 Bag</option>
-                                    <option value="2">2 Bags</option>
-                                    <option value="3">3 Bags</option>
-                                    <option value="4">4+ Bags</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 hours-container" style="display: none;">
-                            <label for="hours" class="form-label">Number of Hours <span class="text-danger">*</span></label>
-                            <select id="hours" class="form-select">
-                                <option value="">Select hours</option>
-                                <option value="4">4 Hours</option>
-                                <option value="5">5 Hours</option>
-                                <option value="6">6 Hours</option>
-                                <option value="7">7 Hours</option>
-                                <option value="8">8 Hours</option>
-                                <option value="9">9 Hours</option>
-                                <option value="10">10 Hours</option>
-                                <option value="11">11 Hours</option>
-                                <option value="12">12 Hours</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn-search" id="searchBtn">
-                            Search Available Vehicles
-                        </button>
-                    </form>
-                </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="pricing-section" id="pricing">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2>Transparent Pricing</h2>
-                <p class="text-muted">Choose the perfect plan for your transportation needs</p>
-            </div>
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="pricing-card">
-                <div class="pricing-header">
-                    <div class="pricing-icon">🚗</div>
-                    <div class="pricing-name">Economy</div>
-                    <div class="pricing-description">Perfect for budget-conscious travelers</div>
-                </div>
-                <div class="pricing-price">
-                    <div class="price-amount">$35</div>
-                    <div class="price-period">per trip</div>
-                </div>
-                <ul class="pricing-features">
-                    <li><span class="check-icon">✓</span> Standard sedan</li>
-                    <li><span class="check-icon">✓</span> Up to 4 passengers</li>
-                    <li><span class="check-icon">✓</span> 2 standard bags</li>
-                    <li><span class="check-icon">✓</span> Professional driver</li>
-                    <li><span class="check-icon">✓</span> 24/7 support</li>
-                </ul>
-                <button class="btn btn-pricing" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">Book Now</button>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="pricing-card featured">
-                        <div class="pricing-badge">Most Popular</div>
-                        <div class="pricing-header">
-                    <div class="pricing-icon">✨</div>
-                    <div class="pricing-name">Premium</div>
-                    <div class="pricing-description">Enhanced comfort and style</div>
-                </div>
-                <div class="pricing-price">
-                    <div class="price-amount">$65</div>
-                    <div class="price-period">per trip</div>
-                </div>
-                <ul class="pricing-features">
-                    <li><span class="check-icon">✓</span> Luxury sedan/SUV</li>
-                    <li><span class="check-icon">✓</span> Up to 6 passengers</li>
-                    <li><span class="check-icon">✓</span> 4 large bags</li>
-                    <li><span class="check-icon">✓</span> Professional driver</li>
-                    <li><span class="check-icon">✓</span> Premium amenities</li>
-                    <li><span class="check-icon">✓</span> Priority support</li>
-                </ul>
-                <button class="btn btn-pricing" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">Book Now</button>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="pricing-card">
-                        <div class="pricing-header">
-                    <div class="pricing-icon">👑</div>
-                    <div class="pricing-name">Executive</div>
-                    <div class="pricing-description">Ultimate luxury experience</div>
-                </div>
-                <div class="pricing-price">
-                    <div class="price-amount">$120</div>
-                    <div class="price-period">per trip</div>
-                </div>
-                <ul class="pricing-features">
-                    <li><span class="check-icon">✓</span> Executive vehicles</li>
-                    <li><span class="check-icon">✓</span> Up to 8 passengers</li>
-                    <li><span class="check-icon">✓</span> Unlimited luggage</li>
-                    <li><span class="check-icon">✓</span> VIP chauffeur</li>
-                    <li><span class="check-icon">✓</span> Luxury amenities</li>
-                    <li><span class="check-icon">✓</span> Concierge service</li>
-                </ul>
-                <button class="btn btn-pricing" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">Book Now</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Contact Section -->
     <section class="contact-section" id="contact">
@@ -510,6 +294,7 @@
             initializeFormSubmission();
             initializeFAQ();
             initializeContactForm();
+            fetchSpecialOffers();
         });
 
         // Navbar scroll effect
@@ -779,6 +564,123 @@
                 alert('Thank you for your message! We will get back to you shortly.');
                 this.reset();
             });
+        }
+
+        // Special Offers Functions
+        async function fetchSpecialOffers() {
+            const offersGrid = document.getElementById('offersGrid');
+            const offersLoading = document.getElementById('offersLoading');
+            const viewAllButton = document.getElementById('viewAllButton');
+
+            offersLoading.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/special-offers', {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch special offers');
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.specialOffers && data.specialOffers.length > 0) {
+                    const offers = data.specialOffers.slice(0, 8); // Show only first 8 offers
+                    renderSpecialOffers(offers);
+                    viewAllButton.style.display = 'block';
+                } else {
+                    offersGrid.innerHTML = '<div class="col-12 text-center"><p class="text-muted">No special offers available at the moment.</p></div>';
+                }
+            } catch (error) {
+                console.error('Error fetching special offers:', error);
+                offersGrid.innerHTML = '<div class="col-12 text-center"><p class="text-danger">Failed to load special offers. Please try again later.</p></div>';
+            } finally {
+                offersLoading.style.display = 'none';
+            }
+        }
+
+        function renderSpecialOffers(offers) {
+            const offersGrid = document.getElementById('offersGrid');
+            offersGrid.innerHTML = '';
+
+            offers.forEach(offer => {
+                const card = createOfferCard(offer);
+                offersGrid.appendChild(card);
+            });
+        }
+
+        function createOfferCard(offer) {
+            const col = document.createElement('div');
+            col.className = 'col-lg-3 col-md-6';
+
+            const finalPrice = calculateFinalPrice(offer.price, offer.discount, offer.discountType);
+            const hasDiscount = offer.discount > 0;
+
+            col.innerHTML = `
+                <div class="offer-card">
+                    <div class="offer-card-image">
+                        <img src="${offer.thumbnail}" alt="${offer.title}" loading="lazy">
+                        
+                        ${offer.startDate && offer.endDate ? `
+                            <span class="date-badge">
+                                <i class="bi bi-calendar"></i> ${formatDateRange(offer.startDate, offer.endDate)}
+                            </span>
+                        ` : ''}
+                    </div>
+                    <div class="offer-card-content">
+                        <div class="offer-location">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>${offer.city.name}, ${offer.country}</span>
+                        </div>
+                        <h3 class="offer-title">${offer.title}</h3>
+                        <div class="offer-meta">
+                            <span><i class="bi bi-clock"></i> ${offer.duration} ${offer.durationUnit}</span>
+                            <span><i class="bi bi-people"></i> Up to ${offer.maxPassengerLimit}</span>
+                        </div>
+                        <div class="offer-pricing">
+                            <div class="offer-price">
+                                <span class="price-label">From</span>
+                                <div class="price-amount">${offer.sourceCurrency.symbol}${finalPrice.toLocaleString()}</div>
+                                ${hasDiscount ? `<div class="price-original">${offer.sourceCurrency.symbol}${offer.price.toLocaleString()}</div>` : ''}
+                            </div>
+                            <a href="/special-offer/${offer.slug}" class="btn-view-details">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return col;
+        }
+
+        function calculateFinalPrice(price, discount, discountType) {
+            if (!discount || discount === 0) return price;
+
+            if (discountType === 'percentage') {
+                return price - (price * discount / 100);
+            } else if (discountType === 'fixed') {
+                return price - discount;
+            }
+
+            return price;
+        }
+
+        function formatDateRange(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
+            const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+            const startDay = start.getDate();
+            const endDay = end.getDate();
+
+            if (startMonth === endMonth) {
+                return `${startMonth} ${startDay}-${endDay}`;
+            } else {
+                return `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
+            }
         }
     </script>
 </body>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VehicleSearchController;
+use App\Http\Controllers\Api\SpecialOfferApiController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,7 +27,19 @@ Route::get('/booking/success/{reservationUuid}', function ($reservationUuid) {
     return view('booking-success', ['reservationUuid' => $reservationUuid]);
 });
 
+// Special Offers Pages
+Route::get('/special-offers', function () {
+    return view('special-offers');
+});
+
+Route::get('/special-offer/{slug}', function ($slug) {
+    return view('special-offer-detail', ['slug' => $slug]);
+});
+
 // API Proxy to avoid CORS issues
 Route::post('/api/search-vehicles', [VehicleSearchController::class, 'search']);
 Route::post('/api/select-vehicle', [VehicleSearchController::class, 'selectVehicle']);
 Route::post('/api/store-reservation', [VehicleSearchController::class, 'storeReservation']);
+
+// Special Offers API Proxy
+Route::get('/api/special-offers', [SpecialOfferApiController::class, 'index']);
