@@ -4,584 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Search Vehicles - LocalRydes</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <title>LocalRydes - Premium Transportation Services</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .header a {
-            color: white;
-            text-decoration: none;
-            opacity: 0.9;
-            margin-top: 10px;
-            display: inline-block;
-        }
-
-        .header a:hover {
-            opacity: 1;
-            text-decoration: underline;
-        }
-
-        .booking-card {
-            background: white;
-            padding: 28px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-        }
-
-        .booking-card h2 {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        /* Service Type Selector */
-        .service-type-selector {
-            margin-bottom: 20px;
-        }
-
-        .service-type-label {
-            font-weight: 600;
-            color: #555;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .service-types {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .service-type-card {
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .service-type-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .service-type-card.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .service-type-card .icon {
-            font-size: 2rem;
-            color: #667eea;
-            flex-shrink: 0;
-        }
-
-        .service-type-card.active .icon {
-            color: #fff;
-        }
-
-        .service-type-card .service-text .title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .service-type-card .service-text .description {
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .service-type-card.active .service-text .description {
-            color: rgba(255,255,255,0.9);
-        }
-
-        /* Form Styles */
-        .form-section {
-            margin-bottom: 18px;
-        }
-
-        .form-section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 14px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #667eea;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #333;
-            font-size: 0.85rem;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: border-color 0.3s;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .required {
-            color: #e74c3c;
-        }
-
-        /* Itinerary Stops */
-        .itinerary-item {
-            background: #f9f9f9;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-            position: relative;
-        }
-
-        .itinerary-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .itinerary-header strong {
-            color: #667eea;
-            font-size: 1rem;
-        }
-
-        .btn-remove {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .btn-remove:hover {
-            background: #c0392b;
-        }
-
-        .btn-add-itinerary {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        .btn-add-itinerary:hover {
-            text-decoration: underline;
-        }
-
-        /* Buttons */
-        .btn-search {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.3s;
-            margin-top: 14px;
-        }
-
-        .btn-search:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-search:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Loading and Results */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            background: white;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-message {
-            display: none;
-            background: #fee;
-            color: #c33;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c33;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
-        .vehicles-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .vehicle-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .vehicle-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .vehicle-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .vehicle-details {
-            padding: 20px;
-        }
-
-        .vehicle-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .vehicle-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .vehicle-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .feature-badge {
-            background: #f0f0f0;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .price-container {
-            margin: 15px 0;
-        }
-
-        .original-price {
-            text-decoration: line-through;
-            color: #999;
-            font-size: 0.9rem;
-        }
-
-        .current-price {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .discount-badge {
-            background: #4CAF50;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            display: inline-block;
-            margin-left: 10px;
-        }
-
-        .btn-book {
-            width: 100%;
-            padding: 12px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-book:hover {
-            background: #45a049;
-        }
-
-        .btn-book:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .btn-book.loading {
-            background: #45a049;
-            cursor: wait;
-        }
-
-        .btn-book .spinner-inline {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.6s linear infinite;
-        }
-
-        .btn-book.loading .spinner-inline {
-            display: block;
-        }
-
-        .partner-info {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .no-results {
-            display: none;
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 15px;
-        }
-
-        .no-results.active {
-            display: block;
-        }
-
-        .no-results h3 {
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .booking-card {
-                padding: 25px;
-            }
-
-            .service-types {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .pac-container {
-            z-index: 10000 !important;
-        }
-    </style>
+    <!-- Custom CSS -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        {{-- <div class="header">
-            <h1>Search Available Vehicles</h1>
-            <p>Find the perfect vehicle for your journey</p>
-            <a href="/">&larr; Back to Home</a>
-        </div> --}}
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="#home">LocalRydes</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#faq">FAQ</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-nav-cta" href="#home">Book Now</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-        <div class="booking-card">
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <div class="hero-text">
+                        <h1>Premium Transportation at Your Fingertips</h1>
+                        <p>Experience luxury and comfort with our professional chauffeur services. Available 24/7 for all your transportation needs.</p>
 
-            <form id="searchForm">
-                <!-- Service Type Selection -->
-                <div class="service-type-selector">
-                    <label class="service-type-label">Select Your Service Type</label>
-                    <div class="service-types">
-                        <div class="service-type-card active" data-service="transfer">
-                            <div class="icon">=�</div>
-                            <div class="service-text">
-                                <div class="title">Transfer Service</div>
-                                <div class="description">Point-to-point transportation</div>
+                        <div class="row g-3 mt-3">
+                            <div class="col-6">
+                                <div class="feature-item">
+                                    <div class="feature-icon">⚡</div>
+                                    <div class="feature-text">Instant Booking</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="service-type-card" data-service="hourly">
-                            <div class="icon">�</div>
-                            <div class="service-text">
-                                <div class="title">Hourly Service</div>
-                                <div class="description">Book by the hour with a driver</div>
+                            <div class="col-6">
+                                <div class="feature-item">
+                                    <div class="feature-icon">🚗</div>
+                                    <div class="feature-text">Premium Vehicles</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="feature-item">
+                                    <div class="feature-icon">👨‍✈️</div>
+                                    <div class="feature-text">Professional Drivers</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="feature-item">
+                                    <div class="feature-icon">💳</div>
+                                    <div class="feature-text">Transparent Pricing</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Location Fields -->
-                <div class="form-section">
-                    <div class="form-section-title">Trip Details</div>
+                <div class="col-lg-6">
 
-                    <div class="form-group">
-                        <label for="pickupLocation">Pickup Location <span class="required">*</span></label>
-                        <input type="text"
-                               id="pickupLocation"
-                               class="search-location"
-                               placeholder="Enter pickup address"
-                               autocomplete="off"
-                               required>
-                    </div>
+                <div class="search-card">
 
-                    <!-- Itinerary Stops Container -->
-                    <div id="itinerariesContainer"></div>
-                    <a href="javascript:void(0)" class="btn-add-itinerary" id="addItinerary">
-                        + Add Stop
-                    </a>
+                    <!-- Error Message -->
+                    <div class="error-message" id="errorMessage"></div>
 
-                    <div class="form-group dropoff-container">
-                        <label for="dropoffLocation">Drop-off Location <span class="required dropoff-required">*</span></label>
-                        <input type="text"
-                               id="dropoffLocation"
-                               class="search-location"
-                               placeholder="Enter drop-off address"
-                               autocomplete="off">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="pickupDate">Pickup Date <span class="required">*</span></label>
-                            <input type="date" id="pickupDate" required>
+                    <form id="searchForm">
+                        <!-- Service Type Selection -->
+                        <div class="mb-3">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="service-type-card active" data-service="transfer">
+                                        <div class="icon">🚖</div>
+                                        <div class="title">Transfer</div>
+                                        <div class="description">Point-to-point</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="service-type-card" data-service="hourly">
+                                        <div class="icon">⏱️</div>
+                                        <div class="title">Hourly</div>
+                                        <div class="description">Book by hour</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="pickupTime">Pickup Time <span class="required">*</span></label>
-                            <input type="time" id="pickupTime" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="passengers">Passengers <span class="required">*</span></label>
-                            <select id="passengers" required>
-                                <option value="1">1 Passenger</option>
-                                <option value="2" selected>2 Passengers</option>
-                                <option value="3">3 Passengers</option>
-                                <option value="4">4 Passengers</option>
-                                <option value="5">5 Passengers</option>
-                                <option value="6">6+ Passengers</option>
-                            </select>
+                        <!-- Location Fields -->
+                        <div class="mb-3">
+                            <label for="pickupLocation" class="form-label">Pickup Location <span class="text-danger">*</span></label>
+                            <input type="text" id="pickupLocation" class="form-control search-location" placeholder="Enter pickup address" autocomplete="off" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="bags">Luggage <span class="required">*</span></label>
-                            <select id="bags" required>
-                                <option value="0">No Luggage</option>
-                                <option value="1" selected>1 Bag</option>
-                                <option value="2">2 Bags</option>
-                                <option value="3">3 Bags</option>
-                                <option value="4">4+ Bags</option>
-                            </select>
+                        <!-- Itinerary Stops Container -->
+                        <div id="itinerariesContainer"></div>
+                        <a href="javascript:void(0)" class="btn-add-itinerary d-inline-block mb-3" id="addItinerary">+ Add Stop</a>
+
+                        <div class="mb-3 dropoff-container">
+                            <label for="dropoffLocation" class="form-label">Drop-off Location <span class="text-danger dropoff-required">*</span></label>
+                            <input type="text" id="dropoffLocation" class="form-control search-location" placeholder="Enter drop-off address" autocomplete="off">
                         </div>
 
-                        <div class="form-group hours-container" style="display: none;">
-                            <label for="hours">Number of Hours <span class="required">*</span></label>
-                            <select id="hours">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="pickupDate" class="form-label">Pickup Date <span class="text-danger">*</span></label>
+                                <input type="date" id="pickupDate" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="pickupTime" class="form-label">Pickup Time <span class="text-danger">*</span></label>
+                                <input type="time" id="pickupTime" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="passengers" class="form-label">Passengers <span class="text-danger">*</span></label>
+                                <select id="passengers" class="form-select" required>
+                                    <option value="1">1 Passenger</option>
+                                    <option value="2" selected>2 Passengers</option>
+                                    <option value="3">3 Passengers</option>
+                                    <option value="4">4 Passengers</option>
+                                    <option value="5">5 Passengers</option>
+                                    <option value="6">6+ Passengers</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="bags" class="form-label">Luggage <span class="text-danger">*</span></label>
+                                <select id="bags" class="form-select" required>
+                                    <option value="0">No Luggage</option>
+                                    <option value="1" selected>1 Bag</option>
+                                    <option value="2">2 Bags</option>
+                                    <option value="3">3 Bags</option>
+                                    <option value="4">4+ Bags</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 hours-container" style="display: none;">
+                            <label for="hours" class="form-label">Number of Hours <span class="text-danger">*</span></label>
+                            <select id="hours" class="form-select">
                                 <option value="">Select hours</option>
                                 <option value="4">4 Hours</option>
                                 <option value="5">5 Hours</option>
@@ -594,24 +175,313 @@
                                 <option value="12">12 Hours</option>
                             </select>
                         </div>
+
+                        <button type="submit" class="btn-search" id="searchBtn">
+                            Search Available Vehicles
+                        </button>
+                    </form>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Transparent Pricing</h2>
+                <p class="text-muted">Choose the perfect plan for your transportation needs</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="pricing-card">
+                <div class="pricing-header">
+                    <div class="pricing-icon">🚗</div>
+                    <div class="pricing-name">Economy</div>
+                    <div class="pricing-description">Perfect for budget-conscious travelers</div>
+                </div>
+                <div class="pricing-price">
+                    <div class="price-amount">$35</div>
+                    <div class="price-period">per trip</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><span class="check-icon">✓</span> Standard sedan</li>
+                    <li><span class="check-icon">✓</span> Up to 4 passengers</li>
+                    <li><span class="check-icon">✓</span> 2 standard bags</li>
+                    <li><span class="check-icon">✓</span> Professional driver</li>
+                    <li><span class="check-icon">✓</span> 24/7 support</li>
+                </ul>
+                <button class="btn btn-pricing" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">Book Now</button>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-search" id="searchBtn">
-                    Search Available Vehicles
-                </button>
-            </form>
+                <div class="col-lg-4">
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge">Most Popular</div>
+                        <div class="pricing-header">
+                    <div class="pricing-icon">✨</div>
+                    <div class="pricing-name">Premium</div>
+                    <div class="pricing-description">Enhanced comfort and style</div>
+                </div>
+                <div class="pricing-price">
+                    <div class="price-amount">$65</div>
+                    <div class="price-period">per trip</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><span class="check-icon">✓</span> Luxury sedan/SUV</li>
+                    <li><span class="check-icon">✓</span> Up to 6 passengers</li>
+                    <li><span class="check-icon">✓</span> 4 large bags</li>
+                    <li><span class="check-icon">✓</span> Professional driver</li>
+                    <li><span class="check-icon">✓</span> Premium amenities</li>
+                    <li><span class="check-icon">✓</span> Priority support</li>
+                </ul>
+                <button class="btn btn-pricing" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">Book Now</button>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                    <div class="pricing-icon">👑</div>
+                    <div class="pricing-name">Executive</div>
+                    <div class="pricing-description">Ultimate luxury experience</div>
+                </div>
+                <div class="pricing-price">
+                    <div class="price-amount">$120</div>
+                    <div class="price-period">per trip</div>
+                </div>
+                <ul class="pricing-features">
+                    <li><span class="check-icon">✓</span> Executive vehicles</li>
+                    <li><span class="check-icon">✓</span> Up to 8 passengers</li>
+                    <li><span class="check-icon">✓</span> Unlimited luggage</li>
+                    <li><span class="check-icon">✓</span> VIP chauffeur</li>
+                    <li><span class="check-icon">✓</span> Luxury amenities</li>
+                    <li><span class="check-icon">✓</span> Concierge service</li>
+                </ul>
+                <button class="btn btn-pricing" onclick="document.getElementById('home').scrollIntoView({behavior: 'smooth'})">Book Now</button>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- Error Message -->
-        <div class="error-message" id="errorMessage"></div>
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Get In Touch</h2>
+                <p class="text-muted">We're here to help you 24/7</p>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-details">
+                        <h3>Visit Us</h3>
+                        <p>123 Transportation Avenue<br>New York, NY 10001<br>United States</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-details">
+                        <h3>Call Us</h3>
+                        <p>+1 (555) 123-4567<br>Available 24/7</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-details">
+                        <h3>Email Us</h3>
+                        <p>info@localrydes.com<br>support@localrydes.com</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">⏰</div>
+                    <div class="contact-details">
+                        <h3>Business Hours</h3>
+                        <p>24/7 Customer Support<br>Office: Mon-Fri, 9AM-6PM</p>
+                    </div>
+                </div>
+                    </div>
+                </div>
 
-        <!-- Loading Indicator -->
-        <div class="loading" id="loading">
+                <div class="col-lg-6">
+                    <div class="contact-form">
+                        <h3>Send us a message</h3>
+                        <form id="contactForm">
+                            <div class="mb-3">
+                                <label for="contactName" class="form-label">Your Name</label>
+                                <input type="text" id="contactName" class="form-control" placeholder="John Doe" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactEmail" class="form-label">Email Address</label>
+                                <input type="email" id="contactEmail" class="form-control" placeholder="john@example.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactPhone" class="form-label">Phone Number</label>
+                                <input type="tel" id="contactPhone" class="form-control" placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactMessage" class="form-label">Message</label>
+                                <textarea id="contactMessage" class="form-control" rows="5" placeholder="How can we help you?" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-submit">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2>Frequently Asked Questions</h2>
+                <p class="text-muted">Find answers to common questions about our services</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>How do I book a ride?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Simply fill out the booking form above with your pickup location, destination, date, and time. Select the number of passengers and luggage, then click "Search Available Vehicles" to see your options. Choose your preferred vehicle and complete the booking process.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>What payment methods do you accept?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        We accept all major credit cards (Visa, MasterCard, American Express), debit cards, and digital payment methods. All payments are processed securely through our encrypted payment gateway.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Can I cancel or modify my booking?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, you can cancel or modify your booking up to 24 hours before the scheduled pickup time without any charges. Cancellations made within 24 hours may incur a cancellation fee. Contact our support team for assistance with modifications.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Are your drivers licensed and insured?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Absolutely! All our drivers are professionally licensed, background-checked, and fully insured. They undergo rigorous training to ensure your safety and comfort throughout your journey.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Do you offer airport transfers?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        Yes, we specialize in airport transfers! Our drivers monitor flight schedules and will adjust pickup times accordingly if your flight is delayed. We also provide meet-and-greet service at the airport terminal.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>What if I have extra luggage?</span>
+                    <span class="faq-icon">▼</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">
+                        No problem! When booking, make sure to select the correct number of bags. If you have oversized luggage or special items, please contact us in advance so we can arrange a suitable vehicle with adequate storage space.
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                <h3>LocalRydes</h3>
+                <p style="color: rgba(255,255,255,0.7); margin-top: 1rem; line-height: 1.6;">
+                    Your trusted partner for premium transportation services. Experience comfort, reliability, and professionalism with every ride.
+                </p>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Airport Transfers</a></li>
+                        <li><a href="#">Corporate Travel</a></li>
+                        <li><a href="#">Hourly Rentals</a></li>
+                        <li><a href="#">Special Events</a></li>
+                        <li><a href="#">City Tours</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>📍 123 Transportation Ave</li>
+                        <li>📞 +1 (555) 123-4567</li>
+                        <li>✉️ info@localrydes.com</li>
+                        <li>⏰ Available 24/7</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="footer-bottom">
+                        <p>&copy; 2026 LocalRydes. All rights reserved. | Privacy Policy | Terms of Service</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Indicator -->
+    <div class="loading" id="loading">
+        <div class="loading-content">
             <div class="spinner"></div>
             <p>Searching for available vehicles...</p>
         </div>
     </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_PLACE_API_KEY') }}&libraries=places"></script>
     <script>
@@ -632,12 +502,27 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            initializeNavbar();
             initializeDateDefaults();
             initializeServiceTypeSwitcher();
             initializeGoogleAutocomplete();
             initializeItineraryButtons();
             initializeFormSubmission();
+            initializeFAQ();
+            initializeContactForm();
         });
+
+        // Navbar scroll effect
+        function initializeNavbar() {
+            window.addEventListener('scroll', function() {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
 
         function initializeDateDefaults() {
             const tomorrow = new Date();
@@ -666,14 +551,12 @@
             const hoursInput = document.getElementById('hours');
 
             if (currentServiceType === 'transfer') {
-                // Transfer: dropoff required, no hours
                 dropoffContainer.style.display = 'block';
                 dropoffInput.required = true;
                 if (dropoffRequired) dropoffRequired.style.display = 'inline';
                 hoursContainer.style.display = 'none';
                 hoursInput.required = false;
             } else {
-                // Hourly: dropoff optional, hours required
                 dropoffContainer.style.display = 'block';
                 dropoffInput.required = false;
                 if (dropoffRequired) dropoffRequired.style.display = 'none';
@@ -719,7 +602,6 @@
             } else if (inputId === 'dropoffLocation') {
                 locationData.dropoff = locationObject;
             } else {
-                // Handle itinerary
                 const match = inputId.match(/itinerary_(\d+)/);
                 if (match) {
                     locationObject.type = "2";
@@ -738,17 +620,17 @@
             itineraryCount++;
             const itineraryHtml = `
                 <div class="itinerary-item" data-index="${itineraryCount}">
-                    <div class="itinerary-header">
-                        <strong>Stop #${itineraryCount}</strong>
-                        <button type="button" class="btn-remove" onclick="removeItinerary(${itineraryCount})">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong style="color: var(--primary-color);">Stop #${itineraryCount}</strong>
+                        <button type="button" class="btn btn-remove btn-sm" onclick="removeItinerary(${itineraryCount})">
                             Remove
                         </button>
                     </div>
-                    <div class="form-group">
-                        <label>Stop Location</label>
+                    <div class="mb-3">
+                        <label class="form-label">Stop Location</label>
                         <input type="text"
                                id="itinerary_${itineraryCount}"
-                               class="search-location"
+                               class="form-control search-location"
                                placeholder="Enter stop address"
                                autocomplete="off">
                     </div>
@@ -757,7 +639,6 @@
 
             document.getElementById('itinerariesContainer').insertAdjacentHTML('beforeend', itineraryHtml);
 
-            // Reinitialize autocomplete for new input
             const newInput = document.getElementById(`itinerary_${itineraryCount}`);
             const autocomplete = new google.maps.places.Autocomplete(newInput);
             autocomplete.addListener('place_changed', function() {
@@ -787,7 +668,6 @@
             const loading = document.getElementById('loading');
             const errorMessage = document.getElementById('errorMessage');
 
-            // Validation
             if (!locationData.pickup) {
                 alert('Please select a pickup location from the dropdown');
                 return;
@@ -798,7 +678,6 @@
                 return;
             }
 
-            // Show loading
             loading.classList.add('active');
             errorMessage.classList.remove('active');
             searchBtn.disabled = true;
@@ -807,7 +686,6 @@
                 const requestData = buildSearchRequest();
                 console.log('Search request:', requestData);
 
-                // Use local proxy to avoid CORS issues
                 const response = await fetch('/api/search-vehicles', {
                     method: 'POST',
                     headers: {
@@ -823,19 +701,15 @@
                     throw new Error(data.message || 'Search failed');
                 }
 
-                // Convert availableVehicles object to array
                 const vehiclesArray = data.data.availableVehicles ? Object.values(data.data.availableVehicles) : [];
 
                 if (data.success && vehiclesArray.length > 0) {
-                    // Save to localStorage
                     const searchData = {
                         vehicles: vehiclesArray,
                         bookingId: data.data.bookingId,
                         timestamp: new Date().getTime()
                     };
                     localStorage.setItem('vehicleSearchResults', JSON.stringify(searchData));
-
-                    // Redirect to results page
                     window.location.href = `/search/availavael-vehicles/${data.data.bookingId}`;
                 } else {
                     alert('No vehicles found. Please try different search criteria.');
@@ -878,6 +752,33 @@
             }
 
             return requestData;
+        }
+
+        // FAQ functionality
+        function initializeFAQ() {
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const faqItem = this.parentElement;
+                    const isActive = faqItem.classList.contains('active');
+
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+
+                    if (!isActive) {
+                        faqItem.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // Contact form
+        function initializeContactForm() {
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your message! We will get back to you shortly.');
+                this.reset();
+            });
         }
     </script>
 </body>
