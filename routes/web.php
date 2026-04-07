@@ -30,7 +30,7 @@ Route::get('/booking/success/{reservationUuid}', function ($reservationUuid) {
 // Special Offers Pages
 Route::get('/special-offers', function () {
     return view('special-offers');
-});
+})->name('special.offers');
 
 Route::get('/special-offer/{slug}', function ($slug) {
     return view('special-offer-detail', ['slug' => $slug]);

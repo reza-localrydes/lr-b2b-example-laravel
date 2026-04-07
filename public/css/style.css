@@ -804,6 +804,13 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
+.offer-card-link {
+    display: block;
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+}
+
 .offer-card-image {
     position: relative;
     height: 240px;
@@ -817,8 +824,23 @@ body {
     transition: transform 0.3s;
 }
 
-.offer-card:hover .offer-card-image img {
+.offer-card-link:hover .offer-card-image img {
     transform: scale(1.1);
+}
+
+.offer-title-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+}
+
+.offer-title-link:hover {
+    color: var(--primary-color);
+}
+
+.offer-title-link .offer-title {
+    transition: color 0.3s;
 }
 
 .category-badge {
@@ -899,9 +921,6 @@ body {
     margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid #f0f0f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .offer-price {
@@ -1096,10 +1115,6 @@ body {
     color: white;
 }
 
-.badge-expired {
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-}
 
 .offer-image {
     position: relative;
@@ -1169,9 +1184,6 @@ body {
 }
 
 .offer-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid #f0f0f0;
@@ -1213,16 +1225,6 @@ body {
     color: white;
 }
 
-.btn-book.disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.btn-book.disabled:hover {
-    box-shadow: none;
-}
-
 .offer-dates {
     display: flex;
     align-items: center;
@@ -1236,21 +1238,6 @@ body {
 
 .offer-dates i {
     color: var(--primary-color);
-}
-
-/* Expired Offers */
-.offer-expired {
-    opacity: 0.6;
-}
-
-.offer-expired .offer-image::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
 }
 
 /* Category Filter */

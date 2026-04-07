@@ -9,39 +9,16 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <style>
         /* Detail Page Specific Styles */
-        .offer-hero {
-            position: relative;
-            height: 500px;
-            background-size: cover;
-            background-position: center;
-            background-color: #f0f0f0;
+        .offer-hero-simple {
+            padding: 140px 0 40px;
+            background: linear-gradient(135deg, #FF4F1E 0%, #ff6b3d 100%);
         }
 
-        .offer-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);
-        }
-
-        .offer-hero-content {
-            position: relative;
-            z-index: 2;
-            height: 100%;
-            display: flex;
-            align-items: flex-end;
-            padding-bottom: 3rem;
-        }
-
-        .offer-hero-content h1 {
+        .offer-hero-simple h1 {
             color: white;
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 800;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .offer-hero-meta {
@@ -55,7 +32,7 @@
             align-items: center;
             gap: 0.5rem;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             padding: 0.5rem 1rem;
@@ -63,7 +40,170 @@
         }
 
         .offer-hero-meta-item i {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
+        }
+
+        /* Offer Details Section */
+        .offer-details-section {
+            padding: 3rem 0;
+            background: #f8f9fa;
+        }
+
+        .offer-info-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            height: 100%;
+        }
+
+        .offer-detail-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .offer-info-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .offer-info-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .info-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .info-meta-item i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            width: 24px;
+        }
+
+        .offer-short-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-light);
+        }
+
+        .gallery-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .gallery-main {
+            flex: 1;
+        }
+
+        .gallery-main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-thumbnails {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 160px;
+        }
+
+        .gallery-thumb {
+            position: relative;
+            height: 95px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-thumb:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .gallery-thumb.active {
+            border-color: var(--primary-color);
+        }
+
+        .gallery-thumb-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Content Description Styling */
+        .content-description {
+            line-height: 1.8;
+        }
+
+        .content-description h1,
+        .content-description h2,
+        .content-description h3,
+        .content-description h4,
+        .content-description h5 {
+            color: var(--text-dark);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-description h5 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .content-description ul {
+            padding-left: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .content-description li {
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .content-description strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .content-description p {
+            margin-bottom: 1rem;
+            color: var(--text-light);
         }
 
         .detail-section {
@@ -214,15 +354,57 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--primary-color);
+            color: white;
             text-decoration: none;
             font-weight: 600;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             transition: gap 0.3s;
+            opacity: 0.9;
         }
 
         .back-link:hover {
             gap: 0.8rem;
+            opacity: 1;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .offer-hero-simple h1 {
+                font-size: 1.8rem;
+            }
+
+            .offer-detail-title {
+                font-size: 1.5rem;
+            }
+
+            .gallery-container {
+                flex-direction: column;
+            }
+
+            .gallery-thumbnails {
+                flex-direction: row;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .gallery-thumb {
+                min-width: 100px;
+                width: 100px;
+                height: 75px;
+            }
+
+            .gallery-main-image {
+                height: 280px;
+            }
+
+            .offer-info-card {
+                padding: 1.5rem;
+            }
+
+            .offer-info-meta {
+                gap: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -258,22 +440,68 @@
         </div>
     </nav>
 
-    <!-- Offer Hero Section -->
-    <div class="offer-hero" id="offerHero">
-        <div class="container h-100">
-            <div class="offer-hero-content">
-                <div>
-                    <a href="/special-offers" class="back-link">
-                        <i class="bi bi-arrow-left"></i> Back to All Offers
-                    </a>
-                    <h1 id="offerTitle">Loading...</h1>
-                    <div class="offer-hero-meta" id="offerMeta">
-                        <!-- Meta info will be populated via JavaScript -->
+    <!-- Offer Hero Section with Image Gallery -->
+    <div class="offer-hero-simple">
+        <div class="container">
+            <a href="/special-offers" class="back-link">
+                <i class="bi bi-arrow-left"></i> Back to All Offers
+            </a>
+            <h1 id="offerTitle">Loading...</h1>
+            <div class="offer-hero-meta" id="offerMeta">
+                <!-- Meta info will be populated via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Offer Details Section -->
+    <section class="offer-details-section d-none" id="offerDetailsSection">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Left Side: Image Gallery -->
+                <div class="col-lg-7">
+                    <div class="gallery-container">
+                        <!-- Main Image -->
+                        <div class="gallery-main">
+                            <img id="mainGalleryImage" class="gallery-main-image" src="" alt="Main offer image">
+                        </div>
+
+                        <!-- Thumbnail Images -->
+                        <div class="gallery-thumbnails" id="galleryThumbnails">
+                            <!-- Thumbnails will be populated via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Basic Info -->
+                <div class="col-lg-5">
+                    <div class="offer-info-card">
+                        <h1 class="offer-detail-title" id="offerDetailTitle">Loading...</h1>
+
+                        <div class="offer-info-badge">Package</div>
+
+                        <div class="offer-info-meta">
+                            <div class="info-meta-item" id="durationInfo">
+                                <i class="bi bi-clock"></i>
+                                <span>Loading...</span>
+                            </div>
+                            <div class="info-meta-item" id="passengersInfo">
+                                <i class="bi bi-people"></i>
+                                <span>Loading...</span>
+                            </div>
+                            <div class="info-meta-item" id="vehicleInfo">
+                                <i class="bi bi-car-front"></i>
+                                <span>Loading...</span>
+                            </div>
+                        </div>
+
+                        <div class="offer-short-description" id="offerShortDescription">
+                            <!-- Short description will be populated via JavaScript -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Loading State -->
     <div id="loadingState" class="text-center py-5">
@@ -298,26 +526,9 @@
             <div class="row g-4">
                 <!-- Main Content -->
                 <div class="col-lg-8">
-                    <!-- Description Card -->
-                    <div class="offer-detail-card">
-                        <h2>About This Offer</h2>
-                        <div id="offerDescription" class="text-muted"></div>
-                    </div>
-
-                    <!-- Features Card -->
-                    <div class="offer-detail-card">
-                        <h2>What's Included</h2>
-                        <div class="feature-list" id="featuresList">
-                            <!-- Features will be populated via JavaScript -->
-                        </div>
-                    </div>
-
-                    <!-- Terms Card -->
-                    <div class="offer-detail-card">
-                        <h2>Terms & Conditions</h2>
-                        <div id="offerTerms" class="text-muted">
-                            <!-- Terms will be populated via JavaScript -->
-                        </div>
+                    <!-- Content Sections (dynamically generated from contents array) -->
+                    <div id="contentSections">
+                        <!-- Content sections will be populated via JavaScript -->
                     </div>
                 </div>
 
@@ -452,89 +663,70 @@
             document.title = `${offer.title} - LocalRydes`;
             document.getElementById('pageTitle').textContent = `${offer.title} - LocalRydes`;
 
-            // Set hero background
-            if (offer.thumbnail) {
-                document.getElementById('offerHero').style.backgroundImage = `url(${offer.thumbnail})`;
-            }
-
             // Set hero content
             document.getElementById('offerTitle').textContent = offer.title;
 
+            // Render image gallery
+            if (offer.images && offer.images.length > 0) {
+                renderImageGallery(offer.images, offer);
+            } else if (offer.thumbnail) {
+                renderImageGallery([offer.thumbnail], offer);
+            }
+
             // Set hero meta
             const meta = document.getElementById('offerMeta');
+            const hasDiscount = offer.discount && offer.discount > 0;
             meta.innerHTML = `
                 <div class="offer-hero-meta-item">
                     <i class="bi ${getCategoryIcon(offer.categorySlug)}"></i>
                     <span>${offer.category || 'Special Offer'}</span>
                 </div>
-                ${offer.discountPercentage ? `
+                ${hasDiscount && offer.discountType === 'percentage' ? `
                 <div class="offer-hero-meta-item">
                     <i class="bi bi-tag"></i>
-                    <span>${offer.discountPercentage}% Off</span>
+                    <span>${offer.discount}% Off</span>
                 </div>
                 ` : ''}
             `;
 
-            // Set description
-            document.getElementById('offerDescription').innerHTML = offer.description || 'No description available.';
-
-            // Set features
-            if (offer.features && offer.features.length > 0) {
-                const featuresList = document.getElementById('featuresList');
-                featuresList.innerHTML = offer.features.map(feature => `
-                    <div class="feature-list-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <div class="feature-list-item-content">
-                            <h4>${feature}</h4>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // Set terms
-            if (offer.termsAndConditions) {
-                document.getElementById('offerTerms').innerHTML = offer.termsAndConditions;
+            // Render content sections
+            if (offer.contents && offer.contents.length > 0) {
+                renderContentSections(offer.contents);
             } else {
-                document.getElementById('offerTerms').innerHTML = `
-                    <ul class="text-muted">
-                        <li>Offer valid from ${formatDate(offer.startDate)} to ${formatDate(offer.endDate)}</li>
-                        <li>Booking must be made in advance</li>
-                        <li>Subject to availability</li>
-                        <li>Cancellation policy applies</li>
-                        <li>Cannot be combined with other offers</li>
-                    </ul>
+                // Fallback if no contents
+                const contentSections = document.getElementById('contentSections');
+                contentSections.innerHTML = `
+                    <div class="offer-detail-card">
+                        <h2>About This Offer</h2>
+                        <div class="text-muted">${offer.description || 'No description available.'}</div>
+                    </div>
                 `;
             }
 
             // Set validity badge
             const validityBadge = document.getElementById('validityBadge');
-            const isActive = isOfferActive(offer);
             const daysRemaining = getDaysRemaining(offer.endDate);
 
-            if (isActive) {
-                if (daysRemaining <= 7) {
-                    validityBadge.innerHTML = `<i class="bi bi-hourglass-split me-2"></i>Ending in ${daysRemaining} day${daysRemaining > 1 ? 's' : ''}!`;
-                } else {
-                    validityBadge.innerHTML = `<i class="bi bi-clock-history me-2"></i>Valid until ${formatDate(offer.endDate)}`;
-                }
+            if (daysRemaining <= 7) {
+                validityBadge.innerHTML = `<i class="bi bi-hourglass-split me-2"></i>Ending in ${daysRemaining} day${daysRemaining > 1 ? 's' : ''}!`;
             } else {
-                validityBadge.classList.add('expired-badge');
-                validityBadge.innerHTML = `<i class="bi bi-x-circle me-2"></i>This offer has expired`;
-                document.getElementById('bookNowBtn').disabled = true;
-                document.getElementById('bookNowBtn').innerHTML = '<i class="bi bi-x-circle me-2"></i>Offer Expired';
+                validityBadge.innerHTML = `<i class="bi bi-clock-history me-2"></i>Valid until ${formatDate(offer.endDate)}`;
             }
 
             // Set pricing
-            const originalPrice = offer.priceDetails?.originalPrice || 0;
-            const discount = offer.discountPercentage || 0;
-            const finalPrice = calculateFinalPrice(originalPrice, discount);
+            const originalPrice = offer.price || 0;
+            const discount = offer.discount || 0;
+            const discountType = offer.discountType || 'percentage';
+            const currencySymbol = offer.sourceCurrency?.symbol || '$';
+            const finalPrice = calculateFinalPrice(originalPrice, discount, discountType);
 
             const bookingPrice = document.getElementById('bookingPrice');
+            const savingsText = discountType === 'percentage' ? `Save ${discount}%` : `Save ${currencySymbol}${discount}`;
             bookingPrice.innerHTML = `
                 <div class="price-label">Price per booking</div>
-                ${discount > 0 ? `<div class="price-original">$${originalPrice}</div>` : ''}
-                <div class="price-final">$${finalPrice}</div>
-                ${discount > 0 ? `<div class="price-discount">Save ${discount}%</div>` : ''}
+                ${discount > 0 ? `<div class="price-original">${currencySymbol}${originalPrice.toLocaleString()}</div>` : ''}
+                <div class="price-final">${currencySymbol}${finalPrice.toLocaleString()}</div>
+                ${discount > 0 ? `<div class="price-discount">${savingsText}</div>` : ''}
             `;
 
             // Set date constraints
@@ -566,11 +758,14 @@
                     customerName: document.getElementById('customerName').value,
                     customerEmail: document.getElementById('customerEmail').value,
                     customerPhone: document.getElementById('customerPhone').value,
-                    originalPrice: currentOffer.priceDetails?.originalPrice || 0,
-                    discount: currentOffer.discountPercentage || 0,
+                    originalPrice: currentOffer.price || 0,
+                    discount: currentOffer.discount || 0,
+                    discountType: currentOffer.discountType || 'percentage',
+                    currencySymbol: currentOffer.sourceCurrency?.symbol || '$',
                     finalPrice: calculateFinalPrice(
-                        currentOffer.priceDetails?.originalPrice || 0,
-                        currentOffer.discountPercentage || 0
+                        currentOffer.price || 0,
+                        currentOffer.discount || 0,
+                        currentOffer.discountType || 'percentage'
                     )
                 };
 
@@ -581,16 +776,9 @@
                     `Offer: ${bookingData.offerTitle}\n` +
                     `Date: ${bookingData.date} at ${bookingData.time}\n` +
                     `Passengers: ${bookingData.passengers}\n` +
-                    `Price: $${bookingData.finalPrice}`
+                    `Price: ${bookingData.currencySymbol}${bookingData.finalPrice.toLocaleString()}`
                 );
             });
-        }
-
-        function isOfferActive(offer) {
-            const now = new Date();
-            const startDate = new Date(offer.startDate);
-            const endDate = new Date(offer.endDate);
-            return now >= startDate && now <= endDate;
         }
 
         function getDaysRemaining(endDate) {
@@ -601,10 +789,129 @@
             return diffDays;
         }
 
-        function calculateFinalPrice(originalPrice, discountPercentage) {
-            if (!originalPrice) return 0;
-            const discount = (originalPrice * discountPercentage) / 100;
-            return (originalPrice - discount).toFixed(2);
+        function renderImageGallery(images, offer) {
+            const mainImage = document.getElementById('mainGalleryImage');
+            const thumbnailsContainer = document.getElementById('galleryThumbnails');
+            const offerDetailsSection = document.getElementById('offerDetailsSection');
+
+            if (!images || images.length === 0) return;
+
+            // Set first image as main
+            mainImage.src = images[0];
+
+            // Show max 4 thumbnails, with "+X" indicator on last if more images
+            const maxThumbs = 4;
+            const displayThumbs = images.slice(0, maxThumbs);
+            const remainingCount = images.length > maxThumbs ? images.length - maxThumbs : 0;
+
+            thumbnailsContainer.innerHTML = displayThumbs.map((img, index) => {
+                const isLast = index === maxThumbs - 1;
+                const showOverlay = isLast && remainingCount > 0;
+
+                return `
+                    <div class="gallery-thumb ${index === 0 ? 'active' : ''}" data-index="${index}">
+                        <img src="${img}" alt="Thumbnail ${index + 1}">
+                        ${showOverlay ? `<div class="gallery-thumb-overlay">+${remainingCount}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Populate right side info
+            document.getElementById('offerDetailTitle').textContent = offer.title;
+
+            // Duration info
+            const durationInfo = document.getElementById('durationInfo');
+            if (offer.duration && offer.durationUnit) {
+                durationInfo.innerHTML = `
+                    <i class="bi bi-clock"></i>
+                    <span>${offer.duration} ${offer.durationUnit}</span>
+                `;
+            } else {
+                durationInfo.style.display = 'none';
+            }
+
+            // Passengers info
+            const passengersInfo = document.getElementById('passengersInfo');
+            if (offer.maxPassengerLimit) {
+                passengersInfo.innerHTML = `
+                    <i class="bi bi-people"></i>
+                    <span>${offer.maxPassengerLimit} Person${offer.maxPassengerLimit > 1 ? 's' : ''}</span>
+                `;
+            } else {
+                passengersInfo.style.display = 'none';
+            }
+
+            // Vehicle info
+            const vehicleInfo = document.getElementById('vehicleInfo');
+            if (offer.partner?.name) {
+                vehicleInfo.innerHTML = `
+                    <i class="bi bi-car-front"></i>
+                    <span>${offer.partner.name}</span>
+                `;
+            } else {
+                vehicleInfo.style.display = 'none';
+            }
+
+            // Short description
+            const shortDescElement = document.getElementById('offerShortDescription');
+            if (offer.shortDescription) {
+                shortDescElement.textContent = offer.shortDescription;
+            } else {
+                shortDescElement.style.display = 'none';
+            }
+
+            // Show section
+            offerDetailsSection.classList.remove('d-none');
+
+            // Add click handlers for thumbnails
+            document.querySelectorAll('.gallery-thumb').forEach((thumb) => {
+                thumb.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+
+                    // Update main image
+                    mainImage.src = images[index];
+
+                    // Update active state
+                    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function renderContentSections(contents) {
+            const contentSections = document.getElementById('contentSections');
+
+            contentSections.innerHTML = contents.map(content => {
+                // Skip if description is "--" or empty
+                if (!content.description || content.description === '--' || content.description.trim() === '') {
+                    return '';
+                }
+
+                return `
+                    <div class="offer-detail-card">
+                        <h2>
+                            ${content.icon ? `<i class="${content.icon} me-2"></i>` : ''}
+                            ${content.title}
+                        </h2>
+                        <div class="content-description">
+                            ${content.description}
+                        </div>
+                    </div>
+                `;
+            }).filter(html => html !== '').join('');
+        }
+
+        function calculateFinalPrice(price, discount, discountType) {
+            if (!price) return 0;
+            if (!discount || discount === 0) return price;
+
+            if (discountType === 'percentage') {
+                return price - (price * discount / 100);
+            } else if (discountType === 'fixed') {
+                return price - discount;
+            }
+
+            return price;
         }
 
         function formatDate(dateString) {

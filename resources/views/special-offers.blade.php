@@ -342,44 +342,42 @@
 
             return `
                 <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="offer-card">
-                        ${isEndingSoon ? '<div class="offer-badge badge-ending">Ending Soon</div>' : ''}
-                        ${hasDiscount && offer.discountType === 'percentage' ? `<div class="offer-badge badge-discount">${offer.discount}% OFF</div>` : ''}
+                    <a href="/special-offer/${offer.slug}" class="offer-card-link">
+                        <div class="offer-card">
+                            ${isEndingSoon ? '<div class="offer-badge badge-ending">Ending Soon</div>' : ''}
+                            ${hasDiscount && offer.discountType === 'percentage' ? `<div class="offer-badge badge-discount">${offer.discount}% OFF</div>` : ''}
 
-                        <div class="offer-image">
-                            <img src="${offer.thumbnail || '/images/default-offer.jpg'}" alt="${offer.title}">
-                        </div>
-
-                        <div class="offer-content">
-                            <div class="offer-location">
-                                <i class="bi bi-geo-alt-fill"></i>
-                                <span>${offer.city?.name || 'Multiple Locations'}</span>
+                            <div class="offer-image">
+                                <img src="${offer.thumbnail || '/images/default-offer.jpg'}" alt="${offer.title}">
                             </div>
 
-                            <h3 class="offer-title">${offer.title}</h3>
-
-                            <div class="offer-meta">
-                                ${offer.duration ? `<span><i class="bi bi-clock"></i> ${offer.duration} ${offer.durationUnit || 'hrs'}</span>` : ''}
-                                ${offer.maxPassengerLimit ? `<span><i class="bi bi-people"></i> Up to ${offer.maxPassengerLimit}</span>` : ''}
-                            </div>
-
-                            <div class="offer-footer">
-                                <div class="offer-price">
-                                    ${hasDiscount ? `<span class="original-price">${currencySymbol}${offer.price.toLocaleString()}</span>` : ''}
-                                    <span class="final-price">${currencySymbol}${finalPrice.toLocaleString()}</span>
+                            <div class="offer-content">
+                                <div class="offer-location">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <span>${offer.city?.name || 'Multiple Locations'}</span>
                                 </div>
 
-                                <a href="/special-offer/${offer.slug}" class="btn-book">
-                                    Book Now
-                                </a>
-                            </div>
+                                <h3 class="offer-title">${offer.title}</h3>
 
-                            <div class="offer-dates">
-                                <i class="bi bi-calendar-range"></i>
-                                ${formatDateRange(offer.startDate, offer.endDate)}
+                                <div class="offer-meta">
+                                    ${offer.duration ? `<span><i class="bi bi-clock"></i> ${offer.duration} ${offer.durationUnit || 'hrs'}</span>` : ''}
+                                    ${offer.maxPassengerLimit ? `<span><i class="bi bi-people"></i> Up to ${offer.maxPassengerLimit}</span>` : ''}
+                                </div>
+
+                                <div class="offer-footer">
+                                    <div class="offer-price">
+                                        ${hasDiscount ? `<span class="original-price">${currencySymbol}${offer.price.toLocaleString()}</span>` : ''}
+                                        <span class="final-price">${currencySymbol}${finalPrice.toLocaleString()}</span>
+                                    </div>
+                                </div>
+
+                                <div class="offer-dates">
+                                    <i class="bi bi-calendar-range"></i>
+                                    ${formatDateRange(offer.startDate, offer.endDate)}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             `;
         }

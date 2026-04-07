@@ -29,7 +29,7 @@
                         <a class="nav-link" href="#home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Offers</a>
+                        <a class="nav-link" href="{{ route('special.offers') }}">Offers</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
@@ -621,21 +621,25 @@
 
             col.innerHTML = `
                 <div class="offer-card">
-                    <div class="offer-card-image">
-                        <img src="${offer.thumbnail}" alt="${offer.title}" loading="lazy">
-                        
-                        ${offer.startDate && offer.endDate ? `
-                            <span class="date-badge">
-                                <i class="bi bi-calendar"></i> ${formatDateRange(offer.startDate, offer.endDate)}
-                            </span>
-                        ` : ''}
-                    </div>
+                    <a href="/special-offer/${offer.slug}" class="offer-card-link">
+                        <div class="offer-card-image">
+                            <img src="${offer.thumbnail}" alt="${offer.title}" loading="lazy">
+
+                            ${offer.startDate && offer.endDate ? `
+                                <span class="date-badge">
+                                    <i class="bi bi-calendar"></i> ${formatDateRange(offer.startDate, offer.endDate)}
+                                </span>
+                            ` : ''}
+                        </div>
+                    </a>
                     <div class="offer-card-content">
                         <div class="offer-location">
                             <i class="bi bi-geo-alt-fill"></i>
                             <span>${offer.city.name}, ${offer.country}</span>
                         </div>
-                        <h3 class="offer-title">${offer.title}</h3>
+                        <a href="/special-offer/${offer.slug}" class="offer-title-link">
+                            <h3 class="offer-title">${offer.title}</h3>
+                        </a>
                         <div class="offer-meta">
                             <span><i class="bi bi-clock"></i> ${offer.duration} ${offer.durationUnit}</span>
                             <span><i class="bi bi-people"></i> Up to ${offer.maxPassengerLimit}</span>
@@ -646,7 +650,6 @@
                                 <div class="price-amount">${offer.sourceCurrency.symbol}${finalPrice.toLocaleString()}</div>
                                 ${hasDiscount ? `<div class="price-original">${offer.sourceCurrency.symbol}${offer.price.toLocaleString()}</div>` : ''}
                             </div>
-                            <a href="/special-offer/${offer.slug}" class="btn-view-details">View Details</a>
                         </div>
                     </div>
                 </div>
