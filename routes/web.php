@@ -36,6 +36,11 @@ Route::get('/special-offer/{slug}', function ($slug) {
     return view('special-offer-detail', ['slug' => $slug]);
 });
 
+// Special Offer Reservation Success Page
+Route::get('/special-offer/reservation/success/{uuid}', function ($uuid) {
+    return view('special-offer-success', ['uuid' => $uuid]);
+});
+
 // API Proxy to avoid CORS issues
 Route::post('/api/search-vehicles', [VehicleSearchController::class, 'search']);
 Route::post('/api/select-vehicle', [VehicleSearchController::class, 'selectVehicle']);
@@ -43,3 +48,6 @@ Route::post('/api/store-reservation', [VehicleSearchController::class, 'storeRes
 
 // Special Offers API Proxy
 Route::get('/api/special-offers', [SpecialOfferApiController::class, 'index']);
+Route::get('/api/special-offers/{slug}', [SpecialOfferApiController::class, 'show']);
+Route::post('/api/special-offers/add-to-cart', [SpecialOfferApiController::class, 'addToCart']);
+Route::get('/api/reservations/{uuid}', [SpecialOfferApiController::class, 'getReservation']);

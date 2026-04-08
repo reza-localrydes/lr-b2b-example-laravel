@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title id="pageTitle">Special Offer - LocalRydes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -259,8 +260,6 @@
         }
 
         .booking-card {
-            position: sticky;
-            top: 100px;
             background: white;
             border-radius: 20px;
             padding: 2.5rem;
@@ -334,20 +333,6 @@
             color: var(--text-light);
             text-align: center;
             margin-top: 1rem;
-        }
-
-        .validity-badge {
-            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-        }
-
-        .expired-badge {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         }
 
         .back-link {
@@ -535,62 +520,79 @@
                 <!-- Booking Sidebar -->
                 <div class="col-lg-4">
                     <div class="booking-card">
-                        <div id="validityBadge" class="validity-badge">
-                            <!-- Validity info will be populated via JavaScript -->
-                        </div>
-
                         <div class="booking-price" id="bookingPrice">
                             <!-- Price will be populated via JavaScript -->
                         </div>
 
                         <form id="bookingForm" class="booking-form">
-                            <div class="mb-3">
-                                <label for="bookingDate" class="form-label">
-                                    <i class="bi bi-calendar3"></i> Select Date
-                                </label>
-                                <input type="date" class="form-control" id="bookingDate" required>
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="bookingDate" class="form-label">
+                                        <i class="bi bi-calendar3"></i> Select Date
+                                    </label>
+                                    <input type="date" class="form-control" id="bookingDate" required>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="bookingTime" class="form-label">
+                                        <i class="bi bi-clock"></i> Time
+                                    </label>
+                                    <input type="time" class="form-control" id="bookingTime" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="bookingTime" class="form-label">
-                                    <i class="bi bi-clock"></i> Select Time
-                                </label>
-                                <input type="time" class="form-control" id="bookingTime" required>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="pickupLocation" class="form-label">
+                                        <i class="bi bi-geo-alt"></i> Pickup Location
+                                    </label>
+                                    <input type="text" class="form-control" id="pickupLocation" placeholder="Enter pickup location" autocomplete="off" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="passengers" class="form-label">
-                                    <i class="bi bi-people"></i> Number of Passengers
-                                </label>
-                                <select class="form-select" id="passengers" required>
-                                    <option value="1">1 Passenger</option>
-                                    <option value="2" selected>2 Passengers</option>
-                                    <option value="3">3 Passengers</option>
-                                    <option value="4">4 Passengers</option>
-                                    <option value="5">5 Passengers</option>
-                                    <option value="6">6+ Passengers</option>
-                                </select>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="dropOffLocation" class="form-label">
+                                        <i class="bi bi-geo-alt-fill"></i> Drop-off Location
+                                    </label>
+                                    <input type="text" class="form-control" id="dropOffLocation" placeholder="Enter drop-off location" autocomplete="off" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="customerName" class="form-label">
-                                    <i class="bi bi-person"></i> Full Name
-                                </label>
-                                <input type="text" class="form-control" id="customerName" placeholder="Enter your name" required>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="customerName" class="form-label">
+                                        <i class="bi bi-person"></i> Full Name
+                                    </label>
+                                    <input type="text" class="form-control" id="customerName" placeholder="Enter your name" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="customerEmail" class="form-label">
-                                    <i class="bi bi-envelope"></i> Email Address
-                                </label>
-                                <input type="email" class="form-control" id="customerEmail" placeholder="your@email.com" required>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="customerEmail" class="form-label">
+                                        <i class="bi bi-envelope"></i> Email Address
+                                    </label>
+                                    <input type="email" class="form-control" id="customerEmail" placeholder="your@email.com" required>
+                                </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="customerPhone" class="form-label">
-                                    <i class="bi bi-telephone"></i> Phone Number
-                                </label>
-                                <input type="tel" class="form-control" id="customerPhone" placeholder="+1 (555) 123-4567" required>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="customerPhone" class="form-label">
+                                        <i class="bi bi-telephone"></i> Phone Number
+                                    </label>
+                                    <input type="tel" class="form-control" id="customerPhone" placeholder="+1 (555) 123-4567" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="additionalNote" class="form-label">
+                                        <i class="bi bi-chat-left-text"></i> Additional Notes (Optional)
+                                    </label>
+                                    <textarea class="form-control" id="additionalNote" rows="3" placeholder="Any special requests or preferences..."></textarea>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn-book-now" id="bookNowBtn">
@@ -623,30 +625,32 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_PLACE_API_KEY') }}&libraries=places"></script>
     <script>
         const offerSlug = '{{ $slug }}';
         let currentOffer = null;
+        let pickupAutocomplete, dropOffAutocomplete;
+        let locationData = {
+            pickup: null,
+            dropoff: null
+        };
 
         // Fetch offer details on page load
         document.addEventListener('DOMContentLoaded', function() {
             fetchOfferDetails();
             setupBookingForm();
+            initializeGooglePlaces();
         });
 
         async function fetchOfferDetails() {
             try {
-                // Fetch all offers and find the one matching the slug
-                const response = await fetch('/api/special-offers');
+                // Fetch specific offer by slug
+                const response = await fetch(`/api/special-offers/${offerSlug}`);
                 const data = await response.json();
 
-                if (data.success && data.specialOffers) {
-                    currentOffer = data.specialOffers.find(offer => offer.slug === offerSlug);
-
-                    if (currentOffer) {
-                        renderOfferDetails(currentOffer);
-                    } else {
-                        showError();
-                    }
+                if (data.success && data.specialOffer) {
+                    currentOffer = data.specialOffer;
+                    renderOfferDetails(currentOffer);
                 } else {
                     showError();
                 }
@@ -703,16 +707,6 @@
                 `;
             }
 
-            // Set validity badge
-            const validityBadge = document.getElementById('validityBadge');
-            const daysRemaining = getDaysRemaining(offer.endDate);
-
-            if (daysRemaining <= 7) {
-                validityBadge.innerHTML = `<i class="bi bi-hourglass-split me-2"></i>Ending in ${daysRemaining} day${daysRemaining > 1 ? 's' : ''}!`;
-            } else {
-                validityBadge.innerHTML = `<i class="bi bi-clock-history me-2"></i>Valid until ${formatDate(offer.endDate)}`;
-            }
-
             // Set pricing
             const originalPrice = offer.price || 0;
             const discount = offer.discount || 0;
@@ -723,7 +717,6 @@
             const bookingPrice = document.getElementById('bookingPrice');
             const savingsText = discountType === 'percentage' ? `Save ${discount}%` : `Save ${currencySymbol}${discount}`;
             bookingPrice.innerHTML = `
-                <div class="price-label">Price per booking</div>
                 ${discount > 0 ? `<div class="price-original">${currencySymbol}${originalPrice.toLocaleString()}</div>` : ''}
                 <div class="price-final">${currencySymbol}${finalPrice.toLocaleString()}</div>
                 ${discount > 0 ? `<div class="price-discount">${savingsText}</div>` : ''}
@@ -740,8 +733,65 @@
             document.getElementById('detailContent').classList.remove('d-none');
         }
 
+        function initializeGooglePlaces() {
+            // Initialize autocomplete for pickup location
+            const pickupInput = document.getElementById('pickupLocation');
+            pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
+                types: ['establishment', 'geocode']
+            });
+
+            // Add event listener for pickup location
+            pickupAutocomplete.addListener('place_changed', function() {
+                handlePlaceSelect(pickupAutocomplete, 'pickupLocation');
+            });
+
+            // Initialize autocomplete for drop-off location
+            const dropOffInput = document.getElementById('dropOffLocation');
+            dropOffAutocomplete = new google.maps.places.Autocomplete(dropOffInput, {
+                types: ['establishment', 'geocode']
+            });
+
+            // Add event listener for drop-off location
+            dropOffAutocomplete.addListener('place_changed', function() {
+                handlePlaceSelect(dropOffAutocomplete, 'dropOffLocation');
+            });
+        }
+
+        function handlePlaceSelect(autocomplete, inputId) {
+            const place = autocomplete.getPlace();
+
+            if (!place || !place.geometry) {
+                console.warn('Please select a location from the dropdown');
+                return;
+            }
+
+            const locationObject = {
+                id: place.place_id,
+                google_place_id: place.place_id,
+                name: document.getElementById(inputId).value,
+                lat: place.geometry.location.lat().toString(),
+                lng: place.geometry.location.lng().toString(),
+                address: place.formatted_address,
+                isFavorite: "0",
+                type: inputId === 'pickupLocation' ? "1" : "3",
+                note: "",
+                types: place.types || []
+            };
+
+            if (inputId === 'pickupLocation') {
+                locationData.pickup = locationObject;
+                console.log('Pickup location selected:', locationObject);
+            } else if (inputId === 'dropOffLocation') {
+                locationData.dropoff = locationObject;
+                console.log('Drop-off location selected:', locationObject);
+            }
+        }
+
         function setupBookingForm() {
-            document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            const bookingForm = document.getElementById('bookingForm');
+            const bookNowBtn = document.getElementById('bookNowBtn');
+
+            bookingForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
                 if (!currentOffer) {
@@ -749,35 +799,91 @@
                     return;
                 }
 
-                const bookingData = {
-                    offerSlug: currentOffer.slug,
-                    offerTitle: currentOffer.title,
-                    date: document.getElementById('bookingDate').value,
-                    time: document.getElementById('bookingTime').value,
-                    passengers: document.getElementById('passengers').value,
-                    customerName: document.getElementById('customerName').value,
-                    customerEmail: document.getElementById('customerEmail').value,
-                    customerPhone: document.getElementById('customerPhone').value,
-                    originalPrice: currentOffer.price || 0,
-                    discount: currentOffer.discount || 0,
-                    discountType: currentOffer.discountType || 'percentage',
-                    currencySymbol: currentOffer.sourceCurrency?.symbol || '$',
-                    finalPrice: calculateFinalPrice(
-                        currentOffer.price || 0,
-                        currentOffer.discount || 0,
-                        currentOffer.discountType || 'percentage'
-                    )
-                };
+                // Validate location selections
+                if (!locationData.pickup) {
+                    alert('Please select a pickup location from the dropdown');
+                    return;
+                }
 
-                console.log('Booking Data:', bookingData);
+                if (!locationData.dropoff) {
+                    alert('Please select a drop-off location from the dropdown');
+                    return;
+                }
 
-                // TODO: Send booking data to backend
-                alert('Booking functionality will be implemented soon!\n\nYour booking details:\n' +
-                    `Offer: ${bookingData.offerTitle}\n` +
-                    `Date: ${bookingData.date} at ${bookingData.time}\n` +
-                    `Passengers: ${bookingData.passengers}\n` +
-                    `Price: ${bookingData.currencySymbol}${bookingData.finalPrice.toLocaleString()}`
-                );
+                // Disable submit button and show loading state
+                bookNowBtn.disabled = true;
+                bookNowBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+                try {
+                    // Calculate drop-off date (same as pickup date for now, can be modified based on offer duration)
+                    const pickupDate = document.getElementById('bookingDate').value;
+                    const dropOffDate = pickupDate; // You can calculate this based on offer.duration if needed
+
+                    // Prepare API payload - send individual customer fields
+                    // Controller will create passenger object for external API
+                    const apiPayload = {
+                        special_offer_id: currentOffer.id,
+                        pickup_date: pickupDate,
+                        pickup_time: document.getElementById('bookingTime').value,
+                        drop_off_date: dropOffDate,
+                        pickup_location: locationData.pickup.name || locationData.pickup.address,
+                        drop_off_location: locationData.dropoff.name || locationData.dropoff.address,
+                        additional_note: document.getElementById('additionalNote').value || '',
+                        customer_name: document.getElementById('customerName').value,
+                        customer_email: document.getElementById('customerEmail').value,
+                        customer_phone: document.getElementById('customerPhone').value
+                    };
+
+                    console.log('Sending booking request:', apiPayload);
+
+                    // Call add-to-cart API
+                    const response = await fetch('/api/special-offers/add-to-cart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify(apiPayload)
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || 'Failed to confirm booking');
+                    }
+
+                    if (result.success && result.reservation) {
+                        console.log('Booking successful:', result);
+
+                        // Store reservation data in localStorage for success page
+                        // Success page expects: reservationData.bookingData.reservation
+                        localStorage.setItem('confirmedReservation', JSON.stringify({
+                            bookingData: {
+                                reservation: result.reservation
+                            },
+                            offer: currentOffer,
+                            formData: apiPayload,
+                            timestamp: new Date().getTime()
+                        }));
+
+                        // Clear previous booking data if any
+                        localStorage.removeItem('selectedVehicleBooking');
+
+                        // Redirect to success page with reservation UUID
+                        const reservationUuid = result.reservation.uuid;
+                        window.location.href = `/booking/success/${reservationUuid}`;
+                    } else {
+                        throw new Error('Invalid response from server');
+                    }
+                } catch (error) {
+                    console.error('Booking error:', error);
+                    alert('An error occurred while processing your booking. Please try again.\n\n' + error.message);
+
+                    // Re-enable button
+                    bookNowBtn.disabled = false;
+                    bookNowBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Book This Offer';
+                }
             });
         }
 
